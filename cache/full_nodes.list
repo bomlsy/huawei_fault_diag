@@ -1,0 +1,22 @@
+[
+  {
+    "username": "dking", 
+    "authtype": "password", 
+    "hostname": "", 
+    "id": 0, 
+    "key": "", 
+    "address": "127.0.0.1", 
+    "password": "qazwsxedc", 
+    "port": 22
+  }, 
+  {
+    "username": "dking", 
+    "authtype": "key", 
+    "hostname": "", 
+    "id": 1, 
+    "key": "/home/dking/.ssh/id_rsa", 
+    "address": "127.0.0.1", 
+    "password": "", 
+    "port": 22
+  }
+]
