@@ -1,10 +1,8 @@
-To use ssh module, specific python libraries are required.
+To run this tool on windows , please follow the instruction:
 
-Considering the exception as compiling pycrypto for windows, a couple of binary exe installers has been prepared here.
+1. cd windows
+2. pip install pip --upgrade
+3. pip install cryptography-1.9-cp27-cp27m-win_amd64.whl PyNaCl-1.1.2-cp27-cp27m-win_amd64.whl
+4. pip install paramiko web.py
 
-1. Install pycrypto.exe as administrator
-2. $ pip install -r requirements.txt
 
-
-Binary Package Provider:
-    http://www.voidspace.org.uk/python/modules.shtml#pycrypto
