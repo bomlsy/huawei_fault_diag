@@ -4,6 +4,7 @@
 import os
 import json
 import threading
+from Queue import Queue
 import paramiko as ssh
 from time import sleep
 from paramiko.ssh_exception import *
@@ -12,19 +13,6 @@ from config import *
 # not running directly
 if __name__ == '__main__':
     exit(1)
-
-
-class Event:
-    # called by web.py
-    # async
-    # push request to queue and hang on, wait response from EventProxy
-    pass
-
-
-class EventProxy:
-    # running in background
-    # use queue
-    pass
 
 
 class Access:
@@ -93,6 +81,8 @@ class Access:
 class Nodes:
     nodes = []
     connect_threads = []
+    msg = Queue()
+    daemon_run = True
 
     def getNode(self, nodeid):
         for node in self.nodes:
@@ -105,10 +95,11 @@ class Nodes:
         for nodeaccess in ac.access_set:
             node = Node(nodeaccess)
             self.nodes.append(node)
+        self.daemon()
 
     def connectAllNodes(self):
         for node in self.nodes:
-            th = threading.Thread(target = node.connect())
+            th = threading.Thread(target = node.connect)
             self.connect_threads.append(th)
             th.start()
 
@@ -119,7 +110,7 @@ class Nodes:
     def connectNode(self, nodeid):
         node = self.getNode(nodeid)
         if node:
-            th = threading.Thread(target = node.connect())
+            th = threading.Thread(target = node.connect)
             self.connect_threads.append(th)
             th.start()
 
@@ -133,8 +124,8 @@ class Nodes:
         if node:
             state = {}
             state['hostname'] = node.access['hostname']
-            state['id'] = node.access['id']
-            state['status'] = node.access['status']
+            state['id'] = node['id']
+            state['status'] = node['status']
             return json.dumps(state)
         else:
             return '{}'
@@ -145,7 +136,7 @@ class Nodes:
             state = {}
             state['hostname'] = node.access['hostname']
             state['id'] = node.access['id']
-            state['status'] = node.access['status']
+            state['status'] = node.status
             states.append(state)
         return json.dumps(states)
 
@@ -169,8 +160,8 @@ class Nodes:
         for node in self.nodes:
             state = {}
             state['hostname'] = node.access['hostname']
-            state['id'] = node.access['id']
-            state['status'] = node.status
+            state['id'] = node['id']
+            state['status'] = node['status']
             state['username'] = node.access['username']
             state['authtype'] = node.access['authtype']
             state['address'] = node.access['address']
@@ -178,20 +169,45 @@ class Nodes:
             states.append(state)
         return json.dumps(states)
 
+    # async
     def executeCmd(self, cmd, nodeid):
         node = self.getNode(nodeid)
-        res = ''
-        if node:
-            res = node.execute(cmd)
-        return json.dumps({'result': res})
+        if node and node['status'] == 1:
+            res = node.execute_cmd(cmd)
+            self.msg.put({'event': 'execute_cmd', 'result': res})
+            return '{"msg":"success"}'
+        else:
+            return '{"msg":"no such node or node not running"}'
 
-    # block. deprecated
     def executeCmdAll(self, cmd):
-        results = []
         for node in self.nodes:
-            res = node.execute(cmd)
-            results.append({'id': node.access['id'], 'result': res})
-        return json.dumps(results)
+            if node['status'] == 1:
+                res = node.execute(cmd)
+                self.msg.put({'event': 'execute_cmd', 'result': res})
+        return '{"msg":"success"}'
+
+    def daemon(self):
+        def mission():
+            while self.daemon_run:
+                last_status = json.loads(self.getAllBasicStatus())
+                sleep(status_daemon_interval)
+                for eachstatus in last_status:
+                    node = self.getNode(eachstatus['id'])
+                    if node['status'] != eachstatus['status'] or node['hostname'] != eachstatus['hostname']:
+                        msg_update = {'event': 'update', 'id': eachstatus['id'],
+                                      'status': json.loads(self.getBasicStatus(eachstatus['id']))}
+                        self.msg.put(msg_update)
+
+        threading.Thread(target = mission).start()
+
+    def stopdaemon(self):
+        self.daemon_run=False
+
+    def getNotification(self):
+        msges = []
+        while not self.msg.empty():
+            msges.append(self.msg.get())
+        return json.dumps(msges)
 
 
 class Node:
@@ -208,6 +224,14 @@ class Node:
             self.access = access
             self.status = 0
             self.client = None
+
+    def __getitem__(self, item):
+        if item == 'id':
+            return self.access['id']
+        if item == 'status':
+            return self.status
+        if item == 'hostname':
+            return self.access['hostname']
 
     def connect(self):
         try:
@@ -243,14 +267,12 @@ class Node:
         def mission():
             tp = self.client.get_transport()
             while self.status == 1:
-                sleep(5)
-                print 'running daemon'
+                sleep(connection_timeout)
                 if tp:
                     if not tp.is_active():
                         self.status = -3
                         break
-
-        threading.Thread(target = mission()).start()
+        threading.Thread(target = mission).start()
 
     def execute_cmd(self, cmd):
         try:

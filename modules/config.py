@@ -12,3 +12,6 @@ default_username = global_config.get('access', 'default_username', 'root')
 default_password = global_config.get('access', 'default_password', '')
 default_authtype = global_config.get('access', 'default_authtype', 'password')
 default_key = global_config.get('access', 'default_key', '')
+
+status_daemon_interval = int(global_config.get('ssh', 'status_daemon_interval', 3))
+connection_timeout = int(global_config.get('ssh', 'connection_timeout', 5))

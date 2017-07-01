@@ -9,7 +9,8 @@ import time, random
 urls = (
     '/connect_all', 'connect_all',
     '/getnodes', 'getnodes',
-    '/exec', 'execute'
+    '/exec', 'execute',
+    '/getnotification', 'getnotification'
 )
 
 
@@ -31,7 +32,12 @@ class execute:
             cmd = req.get('cmd')
             nodeid = int(req.get('node'))
             return nodes.executeCmd(cmd, nodeid)
+    def POST(self):
+        return self.GET()
 
+class getnotification:
+    def GET(self):
+        return nodes.getNotification()
 
 nodes = Nodes()
 nodes.loadNodeList('nodes.list')
