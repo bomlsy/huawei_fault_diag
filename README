@@ -1,0 +1,8 @@
+This tool works as a Nodes Watchdog and Distributable Log Analyser.
+
+Generally speaking,
+this toolkit provides an intergrated web interface where you can add/delete/configure/monitor nodes via ssh protocol, operated by backend, 
+and modules(like log analyser) can be distributed and executed, whose results will be notified in the frontend afterward.
+
+This project is in early development, please come back later.
+
