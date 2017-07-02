@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 import web,sys
-from modules.controller import *
+from core.controller import *
 
 # set port
 if sys.argv.__len__() > 1:
