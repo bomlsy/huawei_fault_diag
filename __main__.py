@@ -2,13 +2,14 @@
 # -*- coding: UTF-8 -*-
 
 import web,sys
+import webbrowser
 from core.controller import *
 
 # set port
 if sys.argv.__len__() > 1:
-    sys.argv[1] = default_listener_port
+    sys.argv[1] = str(default_listener_port)
 else:
-    sys.argv.append(default_listener_port)
+    sys.argv.append(str(default_listener_port))
 
 urls = (
     '/','homepage',
@@ -86,4 +87,5 @@ nodes = Nodes()
 nodes.loadNodeList('nodes.list')
 
 app = web.application(urls, globals())
+webbrowser.open('http://127.0.0.1:'+str(default_listener_port),new=2)
 app.run()
