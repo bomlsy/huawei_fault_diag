@@ -7,11 +7,12 @@
     <script type="text/javascript" src="/static/res/nodesop/domop.js"></script>
     <script type="text/javascript" src="/static/res/nodesop/startup.js"></script>
     <meta charset="utf-8" />
-    <title>对象服务故障定位系统-DEMO</title>
+    <title>对象服务故障定位系统</title>
 </head>
 
 <body>
-    <div class="container-fluid">
+
+    <div class="container-fluid" style="margin-top: 0px">
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
                 <br>
@@ -125,9 +126,61 @@
 
                     </div>
                     </div>
+                    <div class="modal fade" id="modal_nodedetail" tabindex="-1" role="dialog" aria-labelledby="modal_detail_title" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                <h4 class="modal-title" id="modal_detail_title">Node ID</h4>
+                            </div>
+                            <div class="modal-body" id="modal_detail_body">
+                                <div class="row">
+                                    <label for="modal_nodeid" class="col-sm-3 control-label">Node ID</label>
+                                    <p id="modal_nodeid"  class="col-sm-9" ></p>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="modal_hostname" class="col-sm-3 control-label">Hostname</label>
+                                    <p id="modal_hostname"  class="col-sm-9" ></p>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="modal_status" class="col-sm-3 control-label">Status</label>
+                                    <p id="modal_status"  class="col-sm-9" ></p>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="modal_username" class="col-sm-3 control-label">Username</label>
+                                    <div class="col-sm-6"><input id="modal_username"/></div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="modal_address" class="col-sm-3 control-label">Address</label>
+                                    <div class="col-sm-6"><input id="modal_address"/></div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="modal_port" class="col-sm-3 control-label">Port</label>
+                                    <div class="col-sm-6"><input id="modal_port"/></div>
+                                </div>
+                                <br>
+                                <div class="row">
+                                    <label for="btn_authtype" class="col-sm-3 control-label">Authentication</label>
+                                    <p id="btn_authtype"  class="col-sm-2" ></p>
+                                    <div class="col-md-4"><input id="keyfilepath" hidden value=""/></div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Confirm</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
     </div>
 </body>
+
 </html>

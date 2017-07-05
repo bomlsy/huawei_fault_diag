@@ -45,7 +45,7 @@ function insertNodeStatus(msg)
             break;
         case -1:
             buttontext = "Offline";
-            buttonclass = "btn btn-sucess";
+            buttonclass = "btn btn-default";
             btn_onclick = "connect(this,"+ nodeid +")";
             lastmsg = "Disconnected";
             break;
@@ -77,7 +77,7 @@ function insertNodeStatus(msg)
     var cell_status = document.createElement('td');
     var cell_conf = document.createElement('td');
     var btn_status = '<button class="'+ buttonclass +'"  onclick="'+ btn_onclick +'"><span class="glyphicon glyphicon-off"></span>'+ buttontext +'</button>';
-    var btn_conf = '<button class="btn btn-default" onclick="btn_conf('+ nodeid +')"><span class="glyphicon glyphicon-cog"></span></button>';
+    var btn_conf = '<button data-toggle="modal" data-target="#modal_nodedetail" class="btn btn-default" onclick="btn_conf('+ nodeid +')"><span class="glyphicon glyphicon-cog"></span></button>';
 
     cell_nodeid.innerHTML=nodeid;
     cell_hostname.innerHTML=hostname;

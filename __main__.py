@@ -35,9 +35,9 @@ class getnodes:
         if req.has_key('node'):
             nodeid = int(req.get('node'))
             if req.has_key('detail'):
-                nodes.getDetailedStatus(nodeid)
+                return nodes.getDetailedStatus(nodeid)
             else:
-                nodes.getBasicStatus(nodeid)
+                return nodes.getBasicStatus(nodeid)
         else:
             if req.has_key('detail'):
                 return nodes.getAllDetailedStatus()

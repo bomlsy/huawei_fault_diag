@@ -138,6 +138,12 @@ function update_status(nodeid,content)
 	    var btn_status = '<button class="'+ buttonclass +'"  onclick="'+ btn_onclick +'"><span class="glyphicon glyphicon-off"></span>'+ buttontext +'</button>';
 		node.cells[2].innerHTML=btn_status;
 		node.cells[3].innerHTML=lastmsg;
+
+		if($('#modal_nodeid').text()==nodeid)
+        {
+            $('#modal_status').html(btn_status);
+        }
+
 	}
 	else
 	{
@@ -157,7 +163,7 @@ function update_status(nodeid,content)
 	            break;
 	        case -1:
 	            buttontext = "Offline";
-	            buttonclass = "btn btn-sucess";
+	            buttonclass = "btn btn-default";
 	            btn_onclick = "connect(this,"+ nodeid +")";
 	            lastmsg = "Disconnected";
 	            break;
@@ -189,7 +195,7 @@ function update_status(nodeid,content)
 	    var cell_status = document.createElement('td');
 	    var cell_conf = document.createElement('td');
 	    var btn_status = '<button class="'+ buttonclass +'"  onclick="'+ btn_onclick +'"><span class="glyphicon glyphicon-off"></span>'+ buttontext +'</button>';
-        var btn_conf = '<button class="btn btn-default" onclick="btn_conf('+ nodeid +')"><span class="glyphicon glyphicon-cog"></span></button>';
+        var btn_conf = '<button data-toggle="modal" data-target="#modal_nodedetail" class="btn btn-default" onclick="btn_conf('+ nodeid +')"><span class="glyphicon glyphicon-cog"></span></button>';
 
 	    cell_nodeid.innerHTML=nodeid;
 	    cell_hostname.innerHTML=hostname;
@@ -210,6 +216,80 @@ function update_status(nodeid,content)
 
 }
 
+function btn_conf(nodeid)
+{
+    $.get('/getnodes?detail=1&node='+nodeid,function(jmsg){
+        var msg=JSON.parse(jmsg);
+	    var buttonclass="",buttontext="",rowclass="",btn_onclick="";
+	    switch (msg.status) {
+	        case 1:
+	            buttontext = "Online";
+	            buttonclass = "btn btn-success";
+	            btn_onclick = "disconnect(this,"+ nodeid +")";
+	            break;
+	        case 0:
+	            buttonclass = "btn btn-warning";
+	            buttontext = "Pending";
+	            break;
+	        case -1:
+	            buttontext = "Offline";
+	            buttonclass = "btn btn-default";
+	            btn_onclick = "connect(this,"+ nodeid +")";
+	            break;
+	        case -2:
+	            rowclass="danger";
+	            buttontext = "Offline";
+	            buttonclass = "btn btn-danger";
+	            btn_onclick = "connect(this,"+ nodeid +")";
+	            break;
+	        case -3:
+	            rowclass="danger";
+	            buttontext = "Offline";
+	            buttonclass = "btn btn-danger";
+	            btn_onclick = "connect(this,"+ nodeid +")";
+	            break;
+	        default:
+	            return;
+	            break;
+	    }
+	    var btn_status = '<button class="'+ buttonclass +'"  onclick="'+ btn_onclick +'"><span class="glyphicon glyphicon-off"></span>'+ buttontext +'</button>';
+	    $('#modal_status').html(btn_status);
+
+	    $('#modal_nodeid').html(nodeid);
+	    $('#modal_hostname').html(msg.hostname);
+	    $('#modal_username').val(msg.username);
+	    $('#modal_address').val(msg.address);
+	    $('#modal_port').val(msg.port);
+	    var btnauth = '';
+	    if(msg.authtype=="key")
+        {
+            showkeypath(true);
+            btnauth='<button class="btn btn-default" onclick="showkeypath(false)"><span class="glyphicon glyphicon-file"></span> KeyFile</button>';
+        }else
+        {
+            showkeypath(false);
+            btnauth='<button class="btn btn-default" onclick="showkeypath(true)"><span class="glyphicon glyphicon-font"></span>Password</button>';
+        }
+
+	    $('#btn_authtype').html(btnauth);
+
+    });
+}
+
+function showkeypath(tf)
+{
+    var btnauth = '';
+    if(tf)
+    {
+        btnauth='<button class="btn btn-default" onclick="showkeypath(false)"><span class="glyphicon glyphicon-file"></span> KeyFile</button>';
+    }else
+    {
+        btnauth='<button class="btn btn-default" onclick="showkeypath(true)"><span class="glyphicon glyphicon-font"></span>Password</button>';
+    }
+    $('#keyfilepath').get(0).hidden=!tf;
+	$('#btn_authtype').html(btnauth);
+}
+
 function connect(btn,nodeid)
 {
     btn.className="btn btn-warning";
@@ -225,7 +305,7 @@ function disconnect(btn,nodeid)
 
 function notification_puller()
 {
-    if(document.hidden)return;  // do not refresh when window is hidden. HTML5
+    if(document.hidden)return;  // pause refreshing when window is hidden. HTML5
 	$.get('/getnotification',function notification_handler(result){
 		var msgs = JSON.parse(result);
 		if(msgs.length>0)
