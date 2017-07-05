@@ -6,3 +6,8 @@ and modules(like log analyser) can be distributed and executed, whose results wi
 
 This project is in early development, please come back later.
 
+
+
+
+To install on linux/windows, please refer to README_linux.txt in / and README_windows.txt in /windows .
+To run this tool, run $ python __main__.py

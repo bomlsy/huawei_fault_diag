@@ -1,333 +1,133 @@
 <html>
-<head>
 
+<head>
     <script type="text/javascript" src="/static/res/jquery/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="/static/res/bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="/static/res/bootstrap/css/bootstrap.min.css">
-
     <script type="text/javascript" src="/static/res/nodesop/domop.js"></script>
     <script type="text/javascript" src="/static/res/nodesop/startup.js"></script>
-
-    <meta charset="utf-8"/>
+    <meta charset="utf-8" />
     <title>对象服务故障定位系统-DEMO</title>
 </head>
 
 <body>
-
-
-<div class="container-fluid">
-    <div class="row">
-
-        <div class="col-md-10 col-md-offset-1">
-            <br><br><br>
-            <center><h1>对象服务故障定位系统</h1></center>
-            <br><br>
-            <ul id='main_nav' class="nav nav-pills">
-                <li class="active"><a id='page_summary' onclick="main_switcher(this)">Summary</a></li>
-                <li><a id='page_node' onclick="main_switcher(this)">Nodes Status</a></li>
-                <li><a id='page_config' onclick="main_switcher(this)">Configuration</a></li>
-                <li><a id='page_history' onclick="main_switcher(this)">History</a></li>
-            </ul>
-            <br>
-            <div class="col-md-3 pull-right">
-                <center><h4>前端消息窗口</h4></center>
-                <textarea id='logarea' class="form-control" rows="30" style='background-color: white; color: green'
-                          readonly></textarea>
-            </div>
-            <div class="col-md-8 col-md-offset-1">
-                <div class="row" id="main-div-1">
-                    <ul class="nav nav-pills">
-                        <li class="active">
-                            <a onclick="status_filter(this)">All</a>
-                        </li>
-                        <li>
-                            <a onclick="status_filter(this)">Alert</a>
-                        </li>
-                        <li>
-                            <a onclick="status_filter(this)">Warning</a>
-                        </li>
-                    </ul>
-                    <table id="table_status" class="table table-hover table-responsive">
-                        <thead>
-                        <tr>
-                            <th>Nodes ID</th>
-                            <th>Hostname</th>
-                            <th>Status</th>
-                            <th>Message</th>
-                            <th>Operation</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                obj-server-master-1
-                            </td>
-                            <td>
-                                os-debian-m1
-                            </td>
-                            <td>
-                                <div style="color:green"><span class="glyphicon glyphicon-off warning"></span>Online
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <br>
+                <br>
+                <br>
+                <div style="text-align: center;">
+                    <h1>对象服务故障定位系统</h1></div>
+                <br>
+                <br>
+                <ul id='main_nav' class="nav nav-pills">
+                    <li class="active"><a id='page_node' onclick="main_switcher(this)">Nodes Status</a></li>
+                    <li><a id='page_config' onclick="main_switcher(this)">Configuration</a></li>
+                    <li><a id='page_history' onclick="main_switcher(this)">History</a></li>
+                </ul>
+                <br>
+                <div class="row">
+                    <div class="col-md-3 pull-right">
+                        <div style="text-align: center;">
+                            <h4>前端消息窗口</h4></div>
+                        <textarea id='logarea' class="form-control" rows="30" style='background-color: white; color: green' readonly></textarea>
+                    </div>
+                    <div class="col-md-8 col-md-offset-1">
+                        <div class="row" id="main-div-1">
+                                <div class="col-md-3">
+                                <ul class="nav nav-pills">
+                                    <li class="active">
+                                        <a onclick="status_filter(this)">All</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="status_filter(this)">Alert</a>
+                                    </li>
+                                    <li>
+                                        <a onclick="status_filter(this)">Warning</a>
+                                    </li>
+                                 </ul>
                                 </div>
-                            </td>
-                            <td>
-                                Nginx Service Startup.
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                obj-server-slave-21
-                            </td>
-                            <td>
-                                os-debian-s21
-                            </td>
-                            <td>
-                                <div style="color:green"><span class="glyphicon glyphicon-off"></span>Online</div>
-                            </td>
-                            <td>
-                                File Provider Service Startup
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="danger">
-                            <td>
-                                obj-server-slave-22
-                            </td>
-                            <td>
-                                os-debian-s22
-                            </td>
-                            <td>
-                                <div style="color:red"><span class="glyphicon glyphicon-off"></span>Offline</div>
-                            </td>
-                            <td>
-                                Failed to reconnect in 5 minutes.
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </td>
-                        </tr>
-                        <tr class="warning">
-                            <td>
-                                obj-server-slave-24
-                            </td>
-                            <td>
-                                os-debian-s24
-                            </td>
-                            <td>
-                                <div style="color:green"><span class="glyphicon glyphicon-off"></span>Online</div>
-                            </td>
-                            <td>
-                                File Provider Service Failed !
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-remove"></span>
-                                </button>
-                            </td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="row" id="main-div-2" style="display: none;">
-                    <ul class="nav nav-pills">
-                        <li class="active">
-                            <a onclick="status_filter(this)">All</a>
-                        </li>
-                        <li>
-                            <a onclick="status_filter(this)">Alert</a>
-                        </li>
-                        <li>
-                            <a onclick="status_filter(this)">Warning</a>
-                        </li>
-                    </ul>
-                    <table class="table table-hover table-responsive">
-                        <thead>
-                        <tr>
-                            <th>Nodes ID</th>
-                            <th>Hostname</th>
-                            <th>Status</th>
-                            <th>Last Message</th>
-                            <th>Configuration</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <td>
-                                obj-server-master-1
-                            </td>
-                            <td>
-                                os-debian-m1
-                            </td>
-                            <td>
-                                <button class="btn btn-success"><span class="glyphicon glyphicon-off"></span>Online
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                                Nginx Service Startup.
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                obj-server-slave-21
-                            </td>
-                            <td>
-                                os-debian-s21
-                            </td>
-                            <td>
-                                <button class="btn btn-success"><span class="glyphicon glyphicon-off"></span>Online
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                                File Provider Service Startup
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                            </td>
-                        </tr>
-                        <tr class="danger">
-                            <td>
-                                obj-server-slave-22
-                            </td>
-                            <td>
-                                os-debian-s22
-                            </td>
-                            <td>
-                                <button class="btn btn-danger"><span class="glyphicon glyphicon-off"></span>Offline
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                                Failed to reconnect in 5 minutes.
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                obj-server-slave-23
-                            </td>
-                            <td>
-                                os-debian-s23
-                            </td>
-                            <td>
-                                <button class="btn btn-success"><span class="glyphicon glyphicon-off"></span>Online
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                                File Provider Service Startup
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                            </td>
-                        </tr>
-                        <tr class="warning">
-                            <td>
-                                obj-server-slave-24
-                            </td>
-                            <td>
-                                os-debian-s24
-                            </td>
-                            <td>
-                                <button class="btn btn-success"><span class="glyphicon glyphicon-off"></span>Online
-                                </button>
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-list"></span></button>
-                                File Provider Service Failed !
-                            </td>
-                            <td>
-                                <button class="btn btn-default"><span class="glyphicon glyphicon-cog"></span></button>
-                            </td>
-                        </tr>
-
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="row" id="main-div-3">
-                    <button class='btn btn-md btn-primary' onclick="$('#page_node').click();addlog('已开始监控')"><span
-                            class='glyphicon glyphicon-play'></span>Connect
-                    </button>
-                    <button class='btn btn-md btn-danger' onclick="$('#page_node').click();addlog('已停止监控')"><span
-                            class='glyphicon glyphicon-stop'></span>Disconnect
-                    </button>
-                    <button class='btn btn-md btn-warning' onclick="$('#page_config').click();addlog('已重新加载配置')"><span
-                            class='glyphicon glyphicon-refresh'></span>Reload Config
-                    </button>
-                    <br><br>
-                    <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'"></span>Add Host
-                    </button>
-                    <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Rule
-                    </button>
-                    <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Module
-                    </button>
-                    <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Config Set
-                    </button>
-                    <button id='add_rule_help' class='btn btn-md btn-default' data-toggle="modal"
-                            data-target="#helpmodal">?
-                    </button>
-                    <div class="modal fade" id="helpmodal" tabindex="-1" role="dialog" aria-labelledby="helpmodaltitle"
-                         aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal"
-                                            aria-hidden="true">&times;</button>
-                                    <h4 class="modal-title" id="helpmodaltitle">模块规则</h4>
+                                <div class="col-md-6 col-md-offset-3">
+                                    <button class='btn btn-md btn-primary' onclick="$('#page_node').click();$.get('/connect_all',function(msg){addlog(JSON.parse(msg).msg);});"><span class='glyphicon glyphicon-play'></span>Connect
+                                    </button>
+                                    <button class='btn btn-md btn-danger' onclick="$('#page_node').click(); $.get('/disconnect_all',function(msg){addlog(JSON.parse(msg).msg);});"><span class='glyphicon glyphicon-stop'></span>Disconnect
+                                    </button>
+                                    <button class='btn btn-md btn-warning' onclick="$('#page_config').click();addlog('已重新加载配置')"><span class='glyphicon glyphicon-refresh'></span>Reload Config
+                                    </button>
                                 </div>
-                                <div class="modal-body"><pre style='white-space: pre-wrap;word-wrap: break-word;'>
-Rule(规则)是一个正则表达式，用来选出一种所有需要检查的日志文件。
-如 /var/log/auth.log
+                        <div>
+                            <table class="table table-hover table-responsive">
+                                <thead>
+                                    <tr>
+                                        <th>Nodes ID</th>
+                                        <th>Hostname</th>
+                                        <th>Status</th>
+                                        <th>Last Message</th>
+                                        <th>Configuration</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="table_status">
+                                </tbody>
+                            </table>
+                    </div>
+                       </div>
+                        <div class="row" id="main-div-2" style="display: none">
+                            <button class='btn btn-md btn-success'>
+                                <span class='glyphicon glyphicon-plus'></span>Add Host
+                        </button>
+                        <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Rule
+                        </button>
+                        <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Module
+                        </button>
+                        <button class='btn btn-md btn-success'><span class='glyphicon glyphicon-plus'></span>Add Config Set
+                        </button>
+                        <button id='add_rule_help' class='btn btn-md btn-default' data-toggle="modal "
+                                data-target="#helpmodal ">?
+                        </button>
+                        <div class="modal fade " id="helpmodal " tabindex="-1 " role="dialog " aria-labelledby="helpmodaltitle "
+                             aria-hidden="true ">
+                            <div class="modal-dialog ">
+                                <div class="modal-content ">
+                                    <div class="modal-header ">
+                                        <button type="button " class="close " data-dismiss="modal "
+                                                aria-hidden="true ">&times;</button>
+                                        <h4 class="modal-title " id="helpmodaltitle ">模块规则</h4>
+                                    </div>
+                                    <div class="modal-body "><pre style='white-space: pre-wrap;word-wrap: break-word;'>
+    Rule(规则)是一个正则表达式，用来选出一种所有需要检查的日志文件。
+    如 /var/log/auth.log
 
-Module(模块)是日志处理的核心内容。
-每个模块都是一个单独的可执行脚本（Shell/Python/EverythingYouHave），由后台脚本调用。
-调用模块时，根据Rule筛选出的文件将被作为参数传入，经过判断后，调用后台程序提供的工具输出相关信息。
-例如
-<code>
-#!/bin/bash
+    Module(模块)是日志处理的核心内容。
+    每个模块都是一个单独的可执行脚本（Shell/Python/EverythingYouHave），由后台脚本调用。
+    调用模块时，根据Rule筛选出的文件将被作为参数传入，经过判断后，调用后台程序提供的工具输出相关信息。
+    例如
+    <code>
+    #!/bin/bash
 
-logfile=$1
-pattern='your pattern'
+    logfile=$1
+    pattern='your pattern'
 
-if grep -q '$pattern' $logfile;then
-    call_backend error Message
-fi
-</code>
+    if grep -q '$pattern' $logfile;then
+        call_backend error Message
+    fi
+    </code>
 
-Config Set是一个配置集，用于映射多条Rule与Module的对应关系,调用频率等，作为一种配置情景。
-                            </pre>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+    Config Set是一个配置集，用于映射多条Rule与Module的对应关系,调用频率等，作为一种配置情景。
+                                </pre>
+                                    </div>
+                                    <div class="modal-footer ">
+                                        <button type="button " class="btn btn-default " data-dismiss="modal ">关闭</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
+                    </div>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
-
 </body>
 </html>

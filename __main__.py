@@ -14,6 +14,9 @@ else:
 urls = (
     '/','homepage',
     '/connect_all', 'connect_all',
+    '/disconnect_all', 'disconnect_all',
+    '/connect','connect',
+    '/disconnect','disconnect',
     '/getnodes', 'getnodes',
     '/exec_cmd', 'exec_cmd',
     '/exec_mod', 'exec_mod',
@@ -45,7 +48,30 @@ class getnodes:
 class connect_all:
     def GET(self):
         nodes.connectAllNodes()
-        return '{"msg":"command sent"}'
+        return '{"msg":"Connect Commands Sent"}'
+
+class disconnect_all:
+    def GET(self):
+        nodes.disconnectAllNodes()
+        return '{"msg":"Disconnect Commands Sent"}'
+
+class connect:
+    def GET(self):
+        req = web.input()
+        if req.has_key('node'):
+            nodeid = req.get('node')
+            return nodes.connectNode(nodeid)
+        else:
+            return '{"msg":"ERROR: No node specified to connect"}'
+
+class disconnect:
+    def GET(self):
+        req = web.input()
+        if req.has_key('node'):
+            nodeid = req.get('node')
+            return nodes.disconnectNode(nodeid)
+        else:
+            return '{"msg":"ERROR: No node specified to disconnect"}'
 
 
 class exec_cmd:
@@ -85,6 +111,7 @@ class getnotification:
 
 nodes = Nodes()
 nodes.loadNodeList('nodes.list')
+nodes.connectAllNodes()
 
 app = web.application(urls, globals())
 webbrowser.open('http://127.0.0.1:'+str(default_listener_port),new=2)

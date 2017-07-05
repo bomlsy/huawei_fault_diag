@@ -59,7 +59,7 @@ class Node:
                     break
                 self.status = 1
                 self.client.exec_command('mkdir -p log_analyser')
-            self.daemon()
+            threading.Thread(target = self.daemon).start()
 
         except AuthenticationException:
             self.status = -2
@@ -69,19 +69,19 @@ class Node:
     def disconnect(self):
         if self.status == 1:
             self.client.exec_command('rm -rf log_analyser')
-            self.client.close()
             self.status = -1
+            self.client.close()
 
     def daemon(self):
-        def mission():
-            tp = self.client.get_transport()
-            while self.status == 1:
-                sleep(connection_timeout)
-                if tp:
-                    if not tp.is_active():
-                        self.status = -3
-                        break
-        threading.Thread(target = mission).start()
+        tp = self.client.get_transport()
+        while self.status == 1:
+            sleep(1)
+            if self.status != 1:
+                return
+            if tp:
+                if not tp.is_active():
+                    self.status = -3
+                    return
 
     def execute_cmd(self, cmd):
         try:
@@ -120,6 +120,7 @@ class Node:
 class Nodes:
     nodes = []
     connect_threads = []
+    disconnect_threads = []
     msg = Queue()
     daemon_run = True
 
@@ -136,7 +137,7 @@ class Nodes:
         for nodeaccess in ac.access_set:
             node = Node(nodeaccess)
             self.nodes.append(node)
-        self.daemon()
+        threading.Thread(target = self.daemon).start()
 
     def connectAllNodes(self):
         for node in self.nodes:
@@ -146,26 +147,36 @@ class Nodes:
 
     def disconnectAllNodes(self):
         for node in self.nodes:
-            node.disconnect()
+            th = threading.Thread(target = node.disconnect)
+            self.disconnect_threads.append(th)
+            th.start()
 
     def connectNode(self, nodeid):
-        if isinstance(nodeid,str):
+        if isinstance(nodeid,str) or isinstance(nodeid,unicode):
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
             th = threading.Thread(target = node.connect)
             self.connect_threads.append(th)
             th.start()
+            return '{"msg":"Node ' + str(nodeid) +': ' + node['hostname'] + ' Connecting"}'
+        else:
+            return '{"msg":"ERROR: Wrong Node ID"}'
 
     def disconnectNode(self, nodeid):
-        if isinstance(nodeid,str):
+        if isinstance(nodeid,str) or isinstance(nodeid,unicode):
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
-            node.disconnect()
+            th = threading.Thread(target = node.disconnect)
+            self.disconnect_threads.append(th)
+            th.start()
+            return '{"msg":"Node ' + str(nodeid) +': ' + node['hostname'] + ' Disconnecting"}'
+        else:
+            return '{"msg":"ERROR: Wrong Node ID"}'
 
     def getBasicStatus(self, nodeid):
-        if isinstance(nodeid,str):
+        if isinstance(nodeid,str) or isinstance(nodeid,unicode):
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
@@ -188,7 +199,7 @@ class Nodes:
         return json.dumps(states)
 
     def getDetailedStatus(self, nodeid):
-        if isinstance(nodeid,str):
+        if isinstance(nodeid,str) or isinstance(nodeid,unicode):
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
@@ -223,7 +234,7 @@ class Nodes:
         node = self.getNode(nodeid)
         if node and node['status'] == 1:
             res = node.execute_cmd(cmd)
-            self.msg.put({'event': 'execute_cmd', 'result': res, 'node':nodeid})
+            self.msg.put({'event': 'execute_cmd', 'content': {'command': cmd, 'result': res }, 'node':nodeid})
             return '{"msg":"success"}'
         else:
             return '{"msg":"no such node or node not running"}'
@@ -232,14 +243,14 @@ class Nodes:
         for node in self.nodes:
             if node['status'] == 1:
                 res = node.execute(cmd)
-                self.msg.put({'event': 'execute_cmd', 'result': res, 'node': node['id']})
+                self.msg.put({'event': 'execute_cmd', 'content': {'command': cmd, 'result': res }, 'node': node['id']})
         return '{"msg":"success"}'
 
     def executeMod(self, nodeid, mod, param=''):
         node = self.getNode(nodeid)
         if node and node['status'] == 1:
             res = node.execute_mod(mod,param)
-            self.msg.put({'event': 'execute_mod', 'result': res, 'node': node['id']})
+            self.msg.put({'event': 'execute_mod', 'content': {'module': mod, 'result': res }, 'node': node['id']})
             return '{"msg":"success"}'
         else:
             return '{"msg":"no such node or node not running"}'
@@ -248,23 +259,21 @@ class Nodes:
         for node in self.nodes:
             if node['status'] == 1:
                 res = node.execute_mod(mod,param)
-                self.msg.put({'event': 'execute_mod', 'result': res, 'node': node['id']})
+                self.msg.put({'event': 'execute_mod', 'content': {'module': mod, 'result': res }, 'node': node['id']})
         return '{"msg":"success"}'
 
 
     def daemon(self):
-        def mission():
-            while self.daemon_run:
-                last_status = json.loads(self.getAllBasicStatus())
-                sleep(status_daemon_interval)
-                for eachstatus in last_status:
-                    node = self.getNode(eachstatus['id'])
-                    if node['status'] != eachstatus['status'] or node['hostname'] != eachstatus['hostname']:
-                        msg_update = {'event': 'update', 'id': eachstatus['id'],
-                                      'status': json.loads(self.getBasicStatus(eachstatus['id']))}
-                        self.msg.put(msg_update)
+        while self.daemon_run:
+            last_status = json.loads(self.getAllBasicStatus())
+            sleep(status_daemon_interval)
+            for eachstatus in last_status:
+                node = self.getNode(eachstatus['id'])
+                if node['status'] != eachstatus['status'] or node['hostname'] != eachstatus['hostname']:
+                    msg_update = {'event': 'update', 'id': eachstatus['id'],
+                                  'content': json.loads(self.getBasicStatus(eachstatus['id']))}
+                    self.msg.put(msg_update)
 
-        threading.Thread(target = mission).start()
 
     def stopdaemon(self):
         self.daemon_run=False
