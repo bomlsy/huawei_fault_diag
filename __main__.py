@@ -11,101 +11,78 @@ if sys.argv.__len__() > 1:
 else:
     sys.argv.append(str(default_listener_port))
 
-urls = (
-    '/','homepage',
-    '/connect_all', 'connect_all',
-    '/disconnect_all', 'disconnect_all',
-    '/connect','connect',
-    '/disconnect','disconnect',
-    '/getnodes', 'getnodes',
-    '/exec_cmd', 'exec_cmd',
-    '/exec_mod', 'exec_mod',
-    '/getnotification', 'getnotification'
-)
 
+# When a request is unprocessed, two types of text might be returned as HTML content:
+# 1: None
+# 2: not found
+# please cover these situations in case any bug triggered.
+
+
+urls = (
+    '/', 'homepage',
+    '/index.*', 'homepage',                      #### nodeid may be "all", param may be empty
+    '/node/get/(.+)', 'node_get',                   # nodeid  (nodeid?detailed=1 will return detail)
+    '/node/connect/(.+)','node_connect',            # nodeid
+    '/node/disconnect/(.+)','node_disconnect',      # nodeid
+    '/cmd/exec/(.+)/(.+)', 'cmd_exec',              # nodeid, cmdstr
+    '/mod/exec/(.+)/(.+)/(.*)', 'mod_exec',         # nodeid, modname, param
+    '/notification/get', 'notification_get',
+)
 
 class homepage:
     def GET(self):
         return web.seeother('/static/index.html')
 
 
-class getnodes:
-    def GET(self):
+class node_get:
+    def GET(self, nodeid):
         req = web.input()
-        if req.has_key('node'):
-            nodeid = int(req.get('node'))
+        if nodeid.isdigit():
+            nodeid = int(nodeid)
             if req.has_key('detail'):
                 return nodes.getDetailedStatus(nodeid)
             else:
                 return nodes.getBasicStatus(nodeid)
-        else:
+        elif nodeid == "all":
             if req.has_key('detail'):
                 return nodes.getAllDetailedStatus()
             else:
                 return nodes.getAllBasicStatus()
 
+class node_connect:
+    def GET(self, nodeid):
+        if nodeid.isdigit():
+            return nodes.connectNode(int(nodeid))
+        elif nodeid == "all":
+            nodes.connectAllNodes()
+            return '{"msg":"Disconnect Commands Sent"}'
 
-class connect_all:
-    def GET(self):
-        nodes.connectAllNodes()
-        return '{"msg":"Connect Commands Sent"}'
-
-class disconnect_all:
-    def GET(self):
-        nodes.disconnectAllNodes()
-        return '{"msg":"Disconnect Commands Sent"}'
-
-class connect:
-    def GET(self):
-        req = web.input()
-        if req.has_key('node'):
-            nodeid = req.get('node')
-            return nodes.connectNode(nodeid)
-        else:
-            return '{"msg":"ERROR: No node specified to connect"}'
-
-class disconnect:
-    def GET(self):
-        req = web.input()
-        if req.has_key('node'):
-            nodeid = req.get('node')
-            return nodes.disconnectNode(nodeid)
-        else:
-            return '{"msg":"ERROR: No node specified to disconnect"}'
+class node_disconnect:
+    def GET(self, nodeid):
+        if nodeid.isdigit():
+            return nodes.disconnectNode(int(nodeid))
+        elif nodeid == "all":
+            nodes.disconnectAllNodes()
+            return '{"msg":"Disconnect Commands Sent"}'
 
 
-class exec_cmd:
-    def GET(self):
-        req = web.input()
-        if req.has_key('cmd'):
-            cmd = req.get('cmd')
-            if req.has_key('node'):
-                nodeid = int(req.get('node'))
-                return nodes.executeCmd(nodeid , cmd)
-            else:
-                return nodes.executeCmdAll(cmd)
-    def POST(self):
-        return self.GET()
+class cmd_exec:
+    def GET(self, nodeid, cmd):
+        if nodeid.isdigit():
+            nodeid = int(nodeid)
+            return nodes.executeCmd(nodeid, cmd)
+        elif nodeid == "all":
+            return nodes.executeCmdAll(cmd)
 
-class exec_mod:
-    def GET(self):
-        req = web.input()
-        if req.has_key('mod'):
-            mod = req.get('mod')
-            if req.has_key('param'):
-                param=req.get('param')
-            else:
-                param=''
-            if req.has_key('node'):
-                nodeid = int(req.get('node'))
-                return nodes.executeMod(nodeid , mod, param)
-            else:
-                return nodes.executeModAll(mod, param)
-    def POST(self):
-        return self.GET()
+class mod_exec:
+    def GET(self, nodeid, mod, param):
+        if nodeid.isdigit():
+            nodeid = int(nodeid)
+            return nodes.executeMod(nodeid, mod, param)
+        elif nodeid == "all":
+            return nodes.executeModAll(mod, param)
 
-
-class getnotification:
+class notification_get:
     def GET(self):
         return nodes.getNotification()
 

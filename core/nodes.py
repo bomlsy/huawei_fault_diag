@@ -97,23 +97,24 @@ class Node:
 
     def execute_mod(self, modulename, param=''):
         try:
-            with open('modules/'+modulename) as mod:
-                modcontent = mod.read()
-                modsave = 'cat > "log_analyser/' + modulename + '" << MOD_EOF\n' + modcontent + '\nMOD_EOF\n'
-                self.client.exec_command(modsave)
-                self.client.exec_command('chmod +x log_analyser/' + modulename.replace(' ','\\ ')  )
-                stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./' + modulename.replace(' ','\\ ') + ' ' + param )
-                res=''
-                for line in stdout:
-                    res+=line
-                for line in stderr:
-                    res+=line
-                return res
+            mod = open('modules/'+modulename)
+            modcontent = mod.read()
+            modsave = 'cat > "log_analyser/' + modulename + '" << MOD_EOF\n' + modcontent + '\nMOD_EOF\n'
+            self.client.exec_command(modsave)
+            self.client.exec_command('chmod +x log_analyser/' + modulename.replace(' ','\\ ')  )
+            stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./' + modulename.replace(' ','\\ ') + ' ' + param )
+            res=''
+            for line in stdout:
+                res+=line
+            for line in stderr:
+                res+=line
+            return res
 
         except socket.error:
             self.status = -3
-        except:
-            pass
+        except IOError:
+            res = "Module not found"
+            return res
 
 
 
