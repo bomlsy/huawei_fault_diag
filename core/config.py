@@ -13,6 +13,6 @@ default_password = global_config.get('access', 'default_password', '')
 default_authtype = global_config.get('access', 'default_authtype', 'password')
 default_key = global_config.get('access', 'default_key', '')
 
-status_daemon_interval = int(global_config.get('ssh', 'status_daemon_interval', 3))
+access_daemon_interval = int(global_config.get('ssh', 'access_daemon_interval', 10))
 default_listener_port = int(global_config.get('backend', 'default_listener_port', 8080))
 

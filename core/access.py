@@ -2,66 +2,162 @@
 # -*- coding: UTF-8 -*-
 
 import os,json
+import threading
+from time import sleep
+
 from config import *
+from notification import Notification
+
+cache_ready2save = False
 
 class Access:
-    # STATUS
-    #  1 success
-    #  0 config not found
-    # -1 parse error
-    error = []
 
-    def __init__(self, accessfile):
+    def __init__(self):
+        self._iter_id = 0
+        self.status = 0
+        self.user_access_set = []
+        self.full_access_set = []
+        self.msg = Notification()
+        self.accessfile = ""
+        self.user_accessfile = ""
+        self.full_accessfile = ""
+        self.daemon_run = True
+        th = threading.Thread(target = self.daemon)
+        th.setDaemon(True)
+        th.start()
+
+
+    def _load_single_access(self,access, id_AI=True):   # id_AutoIncreasement
+        if isinstance(access,unicode) or isinstance(access,str):
+            try:
+                access = json.load(access)
+            except:
+                return
+
+        if not isinstance(access,dict):
+            return
+
+        full_access = access.copy()
+
+        if not access.has_key('address'):
+            return
+        if not access.has_key('hostname'):
+            full_access['hostname'] = ''
+        if not access.has_key('port'):
+            full_access['port'] = default_port
+        if not access.has_key('username'):
+            full_access['username'] = default_username
+        if not access.has_key('password'):
+            full_access['password'] = default_password
+        if not access.has_key('authtype'):
+            full_access['authtype'] = default_authtype
+        if not access.has_key('key'):
+            full_access['key'] = default_key
+
+        if id_AI:
+            full_access['id'] = self._iter_id
+            self._iter_id += 1
+
+        return full_access
+
+    def addAccess(self,access_str):
+        ac=json.loads(access_str)
+        if ac.has_key('address') and (
+                    ac.has_key('password') or (
+                    ac.has_key('authtype') and ac.get('authtype')=='key' and ac.has_key('key'))):
+            self.user_access_set.append(ac)
+            full_ac = self._load_single_access(ac)
+            self.full_access_set.append(full_ac)
+            self.save()
+            self.save_cache()
+            return full_ac
+
+    def delAccess(self,nodeid):
+        if isinstance(nodeid,unicode) or isinstance(nodeid,str):
+            nodeid = int(nodeid)
+        for index,full_ac in enumerate(self.full_access_set):
+            if full_ac['id'] == nodeid:
+                del self.user_access_set[index]
+                del self.full_access_set[index]
+                self.save()
+                self.save_cache()
+                return True
+        return False
+
+    def updateAccess(self,nodeid,access_str):
+        new_uac=json.loads(access_str)
+        if isinstance(nodeid, unicode):
+            nodeid = int(nodeid)
+        for index,full_ac in enumerate(self.full_access_set):
+            if full_ac['id'] == nodeid:
+                if new_uac.has_key('address') and (
+                            new_uac.has_key('password') or (
+                            new_uac.has_key('authtype') and new_uac.get('authtype')=='key' and new_uac.has_key('key'))):
+                    self.user_access_set[index] = new_uac
+                    new_fac = self._load_single_access(new_uac, id_AI = False)
+                    full_ac = new_fac
+                    self.save()
+                    self.save_cache()
+                    return full_ac
+
+
+    def load(self, accessfile):
         try:
-            self.user_accessfile = 'config/' + accessfile
+            self.accessfile = accessfile
+            self.user_accessfile = 'config/' + self.accessfile
             self.full_accessfile = 'cache/full_' + os.path.basename(self.user_accessfile)
-            # error as no config
+            # error as no such config
             if not os.path.exists(self.user_accessfile):
-                self.status = 0
                 return
 
             # fastload from cache, if config is not updated
             if os.path.exists(self.full_accessfile):
                 if os.path.getmtime(self.full_accessfile) > os.path.getmtime(self.user_accessfile):
-                    af = open(self.full_accessfile, 'r+')
-                    self.access_set = json.load(af)
-                    self.status = 1
-                    af.close()
+                    faf = open(self.full_accessfile, 'r+')
+                    uaf = open(self.user_accessfile, 'r+')
+                    self.full_access_set = json.load(faf)
+                    self.user_access_set = json.load(uaf)
+                    for id_ac in self.full_access_set:
+                        if self._iter_id < id_ac['id']:
+                            self._iter_id = id_ac['id']
+                    self._iter_id +=1
+                    uaf.close()
+                    faf.close()
                     return
 
             # standard load and initialization
             af = open(self.user_accessfile, 'r+')
-            self.access_set = json.load(af)
-            accessid = 0
-            for eachone in self.access_set:
-                if not eachone.has_key('address'):
-                    self.status = 0
-                    self.error.append(accessid)
-                    return
-                if not eachone.has_key('hostname'):
-                    eachone['hostname'] = ''
-                if not eachone.has_key('port'):
-                    eachone['port'] = default_port
-                if not eachone.has_key('username'):
-                    eachone['username'] = default_username
-                if not eachone.has_key('password'):
-                    eachone['password'] = default_password
-                if not eachone.has_key('authtype'):
-                    eachone['authtype'] = default_authtype
-                if not eachone.has_key('key'):
-                    eachone['key'] = default_key
-                eachone['id'] = accessid
-                accessid += 1
-            self.status = 1
+            self.user_access_set = json.load(af)
+            for eachone in self.user_access_set:
+                self.full_access_set.append(self._load_single_access(eachone))
             af.close()
-            self.save()
+            self.save_cache()
         except:
-            self.status = -1
+            pass
 
     def save(self):
         try:
-            naf = open(self.full_accessfile, 'w+')
-            json.dump(self.access_set, naf, indent = 2)
-            naf.close()
+            uaf = open(self.user_accessfile, 'w+')
+            json.dump(self.user_access_set, uaf, indent = 2)
+            uaf.close()
         except:
             pass
+
+    def save_cache(self):
+        try:
+            faf = open(self.full_accessfile, 'w+')
+            json.dump(self.full_access_set, faf, indent = 2)
+            faf.close()
+        except:
+            pass
+
+    def daemon(self):
+        while self.daemon_run:
+            sleep(access_daemon_interval)
+            global cache_ready2save
+            if cache_ready2save:
+                cache_ready2save = False
+                self.save_cache()
+
+    def stopdaemon(self):
+        self.daemon_run=False

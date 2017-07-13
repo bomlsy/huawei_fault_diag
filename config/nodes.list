@@ -1,9 +1,13 @@
 [
-
-
-{"address":"127.0.0.1","password":"qazwsxedc"},
-{"address":"127.0.0.1","authtype":"key","key":"/home/dking/.ssh/id_rsa"}
-
-
+  {
+    "username": "dking", 
+    "password": "qazwsxedc", 
+    "address": "127.0.0.1"
+  }, 
+  {
+    "username": "dking", 
+    "authtype": "key", 
+    "key": "/home/dking/.ssh/id_rsa", 
+    "address": "127.0.0.1"
+  }
 ]
-
