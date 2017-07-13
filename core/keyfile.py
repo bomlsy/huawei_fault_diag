@@ -12,14 +12,14 @@ class KeyFile:
     def __init__(self):
         self.keypath = os.path.join(os.getcwd(),'config', 'keyfile')
 
-    def getKeys(self):
+    def get(self):
         res = []
         for key in os.listdir(self.keypath):
             with open(os.path.join(self.keypath,key)) as kf:
                 res.append({'name':key ,'content': kf.read()})
         return json.dumps(res)
 
-    def addKey(self, keyfilename, keycontent):
+    def add(self, keyfilename, keycontent):
         key = os.path.join(self.keypath, keyfilename)
         if os.path.exists(key):
             return json.dumps({'status':0 ,'msg':'Key %s Exists. Please change filename.' % keyfilename})
@@ -28,7 +28,7 @@ class KeyFile:
                 kf.write(keycontent)
             return json.dumps({'status':1,'msg':"Key %s Added." % keyfilename})
 
-    def delKey(self, keyfilename):
+    def delete(self, keyfilename):
         key = os.path.join(self.keypath, keyfilename)
         if not os.path.exists(key):
             return json.dumps({'status':0 ,'msg':'Key %s Not Exists' % keyfilename})

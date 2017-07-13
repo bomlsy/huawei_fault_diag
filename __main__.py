@@ -7,6 +7,7 @@ from core.nodes import *
 from core.notification import Notification
 from core.keyfile import KeyFile
 from core.modulefile import ModuleFile
+from core.history import History
 
 # When a request is unprocessed, two types of text might be returned as HTML content:
 # 1: None
@@ -25,13 +26,16 @@ urls = (
     '/node/update/(.+)', 'node_update',             # nodeid, POST(new json access)
     '/module/get', 'module_get',
     '/module/add/(.*)', 'module_add',               # module name (empty for original name), POST(description,default_argument)
-    '/module/del/(.+)', 'module_del',               # module name
+    '/module/delete/(.+)', 'module_delete',         # module name
     '/module/exec/(.+)/(.+)/(.*)', 'module_exec',   # nodeid, modname, param
     '/cmd/exec/(.+)/(.+)', 'cmd_exec',              # nodeid, cmdstr
     '/notification/get', 'notification_get',
     '/key/get', 'key_get',
     '/key/add/(.*)', 'key_add',                     # keyname (empty for original name)
-    '/key/del/(.+)', 'key_del',                     # keyname
+    '/key/delete/(.+)', 'key_delete',               # keyname
+    '/history/add', 'history_add',
+    '/history/save', 'history_save',                # POST history=textarea.value
+    '/history/delete', 'history_delete',
 )
 
 
@@ -117,7 +121,7 @@ class cmd_exec:
 
 class module_get:
     def GET(self):
-        return ModuleFile().getModules()
+        return ModuleFile().get()
 
 class module_add:
     def POST(self,modname):
@@ -132,11 +136,11 @@ class module_add:
             arg = mf['default_argument']
         if not modname:
             modname = mf['myfile'].filename
-        return ModuleFile().addModule(modname, mf['myfile'].value, desc, arg)
+        return ModuleFile().add(modname, mf['myfile'].value, desc, arg)
 
-class module_del:
+class module_delete:
     def GET(self,modname):
-        return ModuleFile().delModule(modname)
+        return ModuleFile().delete(modname)
 
 class module_exec:
     def GET(self, nodeid, mod, param):
@@ -151,18 +155,36 @@ class module_exec:
 
 class key_get:
     def GET(self):
-        return KeyFile().getKeys()
+        return KeyFile().get()
 
 class key_add:
     def POST(self,keyname):
         kf = web.input(myfile = {})
         if not keyname:
             keyname = kf['myfile']
-        return KeyFile().addKey(keyname, kf['myfile'].value)
+        return KeyFile().add(keyname, kf['myfile'].value)
 
-class key_del:
+class key_delete:
     def GET(self,keyname):
-        return KeyFile().delKey(keyname)
+        return KeyFile().delete(keyname)
+
+
+# History
+
+class history_get:
+    def GET(self):
+        return History().get()
+
+
+class history_save:
+    def POST(self):
+        req = web.input()
+        if req.has_key('history'):
+            return History().save(req['history'])
+
+class history_delete:
+    def GET(self):
+        return History().delete()
 
 
 # Notification
@@ -170,6 +192,8 @@ class key_del:
 class notification_get:
     def GET(self):
         return notification.get()
+
+
 
 
 

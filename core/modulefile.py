@@ -12,7 +12,7 @@ class ModuleFile:
     def __init__(self):
         self.modulepath = os.path.join(os.getcwd(),'modules')
 
-    def getModules(self):
+    def get(self):
         res=[]
         for desc in os.listdir(self.modulepath):
             if desc.endswith('.description'):
@@ -23,7 +23,7 @@ class ModuleFile:
                         res.append(res_json)
         return json.dumps(res)
 
-    def addModule(self, modulefilename, modulecontent,description_text='',default_argument=''):
+    def add(self, modulefilename, modulecontent,description_text='',default_argument=''):
         if modulefilename.endswith('.description'):
             return json.dumps({'status':0 ,'msg':'Module %s cannot end with ".description". Please change filename.' % modulefilename})
         mod = os.path.join(self.modulepath, modulefilename)
@@ -37,7 +37,7 @@ class ModuleFile:
                 json.dump({'name':modulefilename,'description':description_text,'argument':default_argument},descf,indent=2)
             return json.dumps({'status':1,'msg':"Module %s Added." % modulefilename})
 
-    def delModule(self, modulefilename):
+    def delete(self, modulefilename):
         mod = os.path.join(self.modulepath, modulefilename)
         description = os.path.join(self.modulepath, modulefilename+'.description')
         if not os.path.exists(mod):
