@@ -10,6 +10,11 @@ from notification import Notification
 
 cache_ready2save = False
 
+def SetCacheReady2Save(tf):
+    global cache_ready2save
+    cache_ready2save = tf
+
+
 class Access:
 
     def __init__(self):

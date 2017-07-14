@@ -2,8 +2,6 @@
 # -*- coding: UTF-8 -*-
 
 
-import threading
-from time import sleep
 import paramiko as ssh
 from paramiko.ssh_exception import *
 from access import *
@@ -56,8 +54,7 @@ class Node:
                 for line in stdout:
                     self.config['hostname'] = line.strip('\n')
                     break
-                global cache_ready2save
-                cache_ready2save = True
+                SetCacheReady2Save(True)
 
                 self.status = 1
                 self.client.exec_command('mkdir -p log_analyser')

@@ -1,13 +1,16 @@
 #!/usr/bin/python2.7
 # -*- coding: UTF-8 -*-
 import signal
-import web,sys,os
+import sys
 import webbrowser
-from core.nodes import *
-from core.notification import Notification
+
+import web
+
+from core.history import History
 from core.keyfile import KeyFile
 from core.modulefile import ModuleFile
-from core.history import History
+from core.nodes import *
+from core.notification import Notification
 
 # When a request is unprocessed, two types of text might be returned as HTML content:
 # 1: None
@@ -204,7 +207,7 @@ class EnhancedWebApp(web.application):
         return web.httpserver.runsimple(self.wsgifunc(*middleware), (address, port))
 
 
-def exit_handler(signum,frame):
+def exit_handler(signum,sock):
     print "Ctrl-C (%d) Captured. Exiting." % signum
     exit(0)
 
@@ -228,5 +231,5 @@ if __name__ == "__main__":
     # start web server
     web.config.debug = False
     app = EnhancedWebApp(urls, globals())
-    #webbrowser.open('http://127.0.0.1:'+str(default_listener_port),new=2)
+    webbrowser.open('http://127.0.0.1:'+str(default_listener_port),new=2)
     app.run(port=default_listener_port)

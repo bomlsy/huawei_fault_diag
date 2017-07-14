@@ -21,8 +21,10 @@ class History:
 
     def save(self, logcontent):
         if os.path.exists(self.log):
+            content = logcontent.split('\r\n')
             with open(self.log, 'w') as kf:
-                kf.write(logcontent)
+                for idx in range(0,1000):
+                    kf.write(content[idx]+'\r\n')
             return json.dumps({'status': 1, 'msg': "Log Saved."})
 
     def delete(self):
