@@ -1,0 +1,115 @@
+body{
+  background-color: #EDEDED;
+}
+
+
+main
+{
+  z-index:-1;
+  position: absolute;
+  left: 260px;
+  top: 60px;
+  height: calc(100% - 60px);
+  width: calc(100% - 280px);
+}
+
+.navbar-header{
+  position: absolute;
+  width: 100%;
+  background-color: white;
+}
+
+.navbar-brand {
+  color: white;
+  width: 260px;
+  text-align: center;
+  height: 60px;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 30px;
+  background: #00BFFF;
+  padding-top: 12px;
+}
+
+
+.navbar
+{
+  padding-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+#sidebar {
+  position: absolute;
+  width: 260px;
+  height: calc(100% - 60px);
+  top: 60px;
+  background-color: #222;
+}
+
+#sidebar .list-group-item {
+  border-radius: 0;
+  background-color: #333;
+  color: #ccc;
+  border-left: 0;
+  border-right: 0;
+  border-color: #2c2c2c;
+  white-space: nowrap;
+  font-size: large;
+}
+
+
+#sidebar .list-group .active {
+    background-color: #222;
+}
+
+#sidebar .list-group .list-group-item .active {
+    background-color: #222;
+}
+
+
+
+#sidebar .list-group-item:hover{
+  color: #3BB9FF;
+}
+
+
+#sidebar .list-group .list-group-item[aria-expanded="false"]::after {
+  content: " \f0d7";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 5px;
+}
+
+
+#sidebar .list-group .list-group-item[aria-expanded="true"]::after {
+  content: " \f0da";
+  font-family: FontAwesome;
+  display: inline;
+  text-align: right;
+  padding-left: 5px;
+}
+
+
+#sidebar .list-group .collapse .list-group-item  {
+  padding-left: 50px;
+  transition: padding-left 0.4s;
+  -moz-transition: padding-left 0.4s; /* Firefox 4 */
+  -webkit-transition: padding-left 0.4s; /* Safari 和 Chrome */
+  -o-transition: padding-left 0.4s; /* Opera */
+}
+
+#sidebar .list-group .collapsing .list-group-item  {
+  padding-left: 20px;
+  transition: padding-left 0.3s;
+  -moz-transition: padding-left 0.3s; /* Firefox 4 */
+  -webkit-transition: padding-left 0.3s; /* Safari 和 Chrome */
+  -o-transition: padding-left 0.3s; /* Opera */
+}
+
+.closed{
+  -ms-transform: rotate(90deg); /* IE 9 */
+  -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
+  transform: rotate(90deg);
+}
