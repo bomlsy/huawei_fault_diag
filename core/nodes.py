@@ -58,7 +58,9 @@ class Node:
 
                 self.status = 1
                 self.client.exec_command('mkdir -p log_analyser')
-                threading.Thread(target = self.daemon).start()
+                th = threading.Thread(target = self.daemon)
+                th.setDaemon(True)
+                th.start()
                 # push notification
                 msg_update = {'event': 'update', 'id': self.config['id'],
                               'content': {'status':self.status, 'hostname':self.config['hostname']}}
@@ -71,8 +73,8 @@ class Node:
 
     def disconnect(self):
         if self.status == 1:
-            self.client.exec_command('rm -rf log_analyser')
             self.status = -1
+            self.client.exec_command('rm -rf log_analyser')
             self.client.close()
             # push notification
             msg_update = {'event': 'update', 'id': self.config['id'],
@@ -134,6 +136,16 @@ class Nodes:
     msg = Notification()
 
 
+    def daemon(self):
+        while True:
+            sleep(20)
+            for idx in range(len(self.connect_threads)-1,0,-1):
+                if not self.connect_threads[idx].isAlive():
+                    del self.connect_threads[idx]
+            for idx in range(len(self.disconnect_threads)-1,0,-1):
+                if not self.disconnect_threads[idx].isAlive():
+                    del self.disconnect_threads[idx]
+
     def addNode(self,access_str):
         full_ac = self.access.addAccess(access_str)
         if full_ac:
@@ -176,6 +188,9 @@ class Nodes:
         for nodeaccess in self.access.full_access_set:
             node = Node(nodeaccess)
             self.nodes.append(node)
+        th = threading.Thread(target=self.daemon())
+        th.setDaemon(True)
+        th.start()
 
     def connectAllNodes(self):
         for node in self.nodes:

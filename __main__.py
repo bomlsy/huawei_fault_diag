@@ -209,7 +209,11 @@ class EnhancedWebApp(web.application):
 
 
 def exit_handler(signum,sock):
-    print "Ctrl-C (%d) Captured. Exiting." % signum
+    print "Ctrl-C (%d) Captured. Disconnecting..." % signum
+    nodes.access.stopdaemon()
+    nodes.disconnectAllNodes()
+    sleep(2)
+    print "Server stopped."
     exit(0)
 
 
