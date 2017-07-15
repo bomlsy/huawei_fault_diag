@@ -20,6 +20,7 @@ from core.notification import Notification
 
 urls = (
     '/', 'homepage',
+    '/index', 'homepage',
     '/index.*', 'homepage',                      #### nodeid may be "all", param may be empty
     '/node/get/(.+)', 'node_get',                   # nodeid  (nodeid?detailed will return detail)
     '/node/connect/(.+)', 'node_connect',           # nodeid
@@ -44,7 +45,7 @@ urls = (
 
 class homepage:
     def GET(self):
-        return web.seeother('/static/index.html')
+        return web.seeother('/static/dashboard.html')
 
 
 # Node
@@ -218,6 +219,13 @@ if __name__ == "__main__":
 
     # ensure current directory
     os.chdir(sys.path[0])
+    # mkdir cache
+    if os.path.exists('cache'):
+        if os.path.isfile('cache'):
+            os.remove('cache')
+            os.mkdir('cache')
+    else:
+        os.mkdir('cache')
 
 
     # init a notification queue handler

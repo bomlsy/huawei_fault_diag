@@ -3,21 +3,43 @@ body{
 }
 
 
-main
-{
+main{
   z-index:-1;
   position: absolute;
-  left: 260px;
-  top: 60px;
-  height: calc(100% - 60px);
-  width: calc(100% - 280px);
+  left: 290px;
+  height: calc(100% - 70px);
+  width: calc(100% - 290px);
 }
 
+
+/*
+.row
+*/
+
+.row{
+  margin-left: 0px;
+  margin-right: 0px;
+}
+
+
+/*
+Head Bar
+*/
+
+.navbar
+{
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+}
 .navbar-header{
-  position: absolute;
   width: 100%;
   background-color: white;
+  box-shadow: 0px 5px 5px #888888;
 }
+
+
 
 .navbar-brand {
   color: white;
@@ -31,50 +53,87 @@ main
   padding-top: 12px;
 }
 
+.navbar-brand:hover{
+  color: white;
 
-.navbar
-{
-  padding-left: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+  text-shadow: 0 0 10px white;
+  font-size: 26px;
+  transition: text-shadow 0.6s;
+  -moz-transition: text-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: text-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: text-shadow 0.6s; /* Opera */
 }
 
-#sidebar {
+
+
+/*
+Sidebar
+*/
+
+.sidebar {
   position: absolute;
-  width: 260px;
   height: calc(100% - 60px);
+}
+
+.sidebar .list-group {
+  width: 260px;
+  height: 100%;
   top: 60px;
   background-color: #222;
 }
 
-#sidebar .list-group-item {
+.sidebar .list-group .list-group-item {
   border-radius: 0;
-  background-color: #333;
   color: #ccc;
   border-left: 0;
   border-right: 0;
   border-color: #2c2c2c;
   white-space: nowrap;
   font-size: large;
+  height: 53px;
+
+  background-color: #333;
+  transition: background-color 0.6s;
+  -moz-transition: background-color 0.6s; /* Firefox 4 */
+  -webkit-transition: background-color 0.6s; /* Safari 和 Chrome */
+  -o-transition: background-color 0.6s; /* Opera */
 }
 
 
-#sidebar .list-group .active {
+.sidebar .list-group .list-group-item:hover{
+  background-color: #222;
+  transition: background-color 0.6s;
+  -moz-transition: background-color 0.6s; /* Firefox 4 */
+  -webkit-transition: background-color 0.6s; /* Safari 和 Chrome */
+  -o-transition: background-color 0.6s; /* Opera */
+}
+
+.sidebar .list-group .collapse .list-group-item:hover{
+  background-color: #222;
+  transition: background-color 1s;
+  -moz-transition: background-color 1s; /* Firefox 4 */
+  -webkit-transition: background-color 1s; /* Safari 和 Chrome */
+  -o-transition: background-color 1s; /* Opera */
+}
+
+
+
+.sidebar .list-group .active {
     background-color: #222;
 }
 
-#sidebar .list-group .list-group-item .active {
+.sidebar .list-group .list-group-item .active {
     background-color: #222;
 }
 
 
 
-#sidebar .list-group-item:hover{
+.list-group .list-group-item:hover{
   color: #3BB9FF;
 }
 
 
-#sidebar .list-group .list-group-item[aria-expanded="false"]::after {
+.sidebar .list-group .list-group-item[aria-expanded="false"]::after {
   content: " \f0d7";
   font-family: FontAwesome;
   display: inline;
@@ -83,7 +142,7 @@ main
 }
 
 
-#sidebar .list-group .list-group-item[aria-expanded="true"]::after {
+.sidebar .list-group .list-group-item[aria-expanded="true"]::after {
   content: " \f0da";
   font-family: FontAwesome;
   display: inline;
@@ -92,7 +151,7 @@ main
 }
 
 
-#sidebar .list-group .collapse .list-group-item  {
+.sidebar .list-group .collapse .list-group-item  {
   padding-left: 50px;
   transition: padding-left 0.4s;
   -moz-transition: padding-left 0.4s; /* Firefox 4 */
@@ -100,7 +159,7 @@ main
   -o-transition: padding-left 0.4s; /* Opera */
 }
 
-#sidebar .list-group .collapsing .list-group-item  {
+.sidebar .list-group .collapsing .list-group-item  {
   padding-left: 20px;
   transition: padding-left 0.3s;
   -moz-transition: padding-left 0.3s; /* Firefox 4 */
@@ -112,4 +171,100 @@ main
   -ms-transform: rotate(90deg); /* IE 9 */
   -webkit-transform: rotate(90deg); /* Chrome, Safari, Opera */
   transform: rotate(90deg);
+}
+
+
+/*
+Shine
+*/
+.list-group-item:hover:before {
+    left: 400px;
+    transition: left 1s ease 0s;
+}
+.list-group-item:before {
+    content: "";
+    position: absolute;
+    width: 260px;
+    height: 53px;
+    top: 0;
+    left: -400px;
+    overflow: hidden;
+    background: -moz-linear-gradient(left,rgba(255,255,255,0)0,rgba(255,255,255,.2)50%,rgba(255,255,255,0)100%);
+    background: -webkit-gradient(linear,left top,right top,color-stop(0%,rgba(255,255,255,0)),color-stop(50%,rgba(255,255,255,.2)),color-stop(100%,rgba(255,255,255,0))); 
+    background: -webkit-linear-gradient(left,rgba(255,255,255,0)0,rgba(255,255,255,.2)50%,rgba(255,255,255,0)100%);
+    background: -o-linear-gradient(left,rgba(255,255,255,0)0,rgba(255,255,255,.2)50%,rgba(255,255,255,0)100%);
+    -webkit-transform: skewX(-25deg);
+    -moz-transform: skewX(-25deg);
+    -o-transform: skewX(-25deg);
+    transition: skewX(-25deg);
+}
+
+
+
+
+
+/*
+.board in Dashboard
+*/
+
+.board .panel {
+  padding: 25px 15px;
+  border:none;
+  background:#fff;
+}
+.board .number{
+  float:left;
+}
+.board .icon{
+  float:right;
+}
+.board .panel .icon .fa {
+  color: #FFFFFF;
+  background: #30A5FF;
+  padding: 19px;
+}
+.panel-primary{
+  display:inline-block;
+  margin-bottom: 30px;
+  width:100%;
+}
+
+
+
+/*
+Page Header
+*/
+
+.header {
+    margin: 0 30px;
+}
+.page-header {
+    margin: 0;
+    border-bottom: 1px solid transparent;
+    text-align: left;
+    padding: 32px 22px 32px 15px;
+    color: #323232;
+}
+.page-header small {
+display: inline;
+padding-top: 14px;
+font-size: 19px;
+}
+h1.page-header small {
+    color: #7E7E7E;
+    margin-left: 15px;
+    font-size: 20px;
+}
+
+.number h3 {
+    font-size: 32px;
+    color: #676767;
+}
+.number small {
+    font-size: 14px;
+    color: #AAB5BC;
+    font-weight: 600;
+    text-transform: uppercase;
+    margin: 8px 5px;
+    display: inline-block;
 }

@@ -1,7 +1,5 @@
 # skip cache
-cache/*
-!cache/.gitkeep
-!cache/
+cache
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

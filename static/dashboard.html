@@ -22,24 +22,40 @@
     </div>
 </nav>
 
-<div id="sidebar">
+<div class="sidebar">
     <div class="list-group panel">
         <a href="dashboard.html" class="list-group-item active"><i class="fa fa-dashboard"></i> Dashboard</a>
         <a href="nodes.html" class="list-group-item"><i class="fa fa-sitemap"></i> Nodes</a>
-        <a href="#menu3" class="list-group-item" data-toggle="collapse" data-parent="#sidebar" aria-expanded="false"><i class="fa fa-cogs"></i> Configure</a>
+        <a href="task.html" class="list-group-item"><i class="fa fa-tasks"></i> Task</a>
+        <a href="#menu3" class="list-group-item collapsed " data-toggle="collapse" data-parent="#sidebar" aria-expanded="false"><i class="fa fa-cogs"></i> Configure</a>
         <div class="collapse" id="menu3">
             <a href="access.html" class="list-group-item"><i class="fa fa-cog"></i> Access</a>
-            <a href="modules.html" class="list-group-item"><i class="fa fa-tasks"></i> Modules</a>
+            <a href="modules.html" class="list-group-item"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item"><i class="fa fa-key"></i> Keys</a>
         </div>
-        <a href="history.html" class="list-group-item"><i class="fa fa-dashboard"></i> History</a>
+        <a href="history.html" class="list-group-item"><i class="fa fa-list"></i> History</a>
     </div>
 </div>
 
-<main>
 <div class="container-fluid">
+<main>
+    <h1 class="page-header">
+        Dashboard <small>当前状态</small>
+    </h1>
     <div class="row">
         <div class="col-md-4">
+            <div class="board">
+                <div class="panel panel-primary">
+                    <div class="number">
+                        <h3></h3>
+                        <h3>44,023</h3>
+                        <small>Daily Visits</small>
+                    </div>
+                    <div class="icon">
+                       <i class="fa fa-eye fa-3x"></i>
+                    </div>
+                </div>
+            </div>
 
         </div>
 
@@ -53,9 +69,8 @@
 
     </div>
 
-</div>
 </main>
-
+</div>
 
 
 <script src="assets/js/jquery-3.2.1.js"></script>
