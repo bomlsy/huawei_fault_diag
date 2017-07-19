@@ -22,7 +22,7 @@ urls = (
     '/', 'homepage',
     '/index', 'homepage',
     '/index.*', 'homepage',                      #### nodeid may be "all", param may be empty
-    '/node/get/(.+)', 'node_get',                   # nodeid  (nodeid?detailed will return detail)
+    '/node/get/(.+)', 'node_get',                   # nodeid  (nodeid?detail will return detail)
     '/node/connect/(.+)', 'node_connect',           # nodeid
     '/node/disconnect/(.+)', 'node_disconnect',     # nodeid
     '/node/add', 'node_add',                        # POST( access={"address":...} )
@@ -33,7 +33,7 @@ urls = (
     '/module/delete/(.+)', 'module_delete',         # module name
     '/module/exec/(.+)/(.+)/(.*)', 'module_exec',   # nodeid, modname, param
     '/cmd/exec/(.+)/(.+)', 'cmd_exec',              # nodeid, cmdstr
-    '/notification/get', 'notification_get',
+    '/notification/get/(.+)', 'notification_get',
     '/key/get', 'key_get',
     '/key/add/(.*)', 'key_add',                     # keyname (empty for original name)
     '/key/delete/(.+)', 'key_delete',               # keyname
@@ -56,12 +56,12 @@ class node_get:
         if nodeid.isdigit():
             nodeid = int(nodeid)
             if req.has_key('detail'):
-                return nodes.getDetailedStatus(nodeid)
+                return nodes.getDetailStatus(nodeid)
             else:
                 return nodes.getBasicStatus(nodeid)
         elif nodeid == "all":
             if req.has_key('detail'):
-                return nodes.getAllDetailedStatus()
+                return nodes.getAllDetailStatus()
             else:
                 return nodes.getAllBasicStatus()
 
@@ -194,8 +194,8 @@ class history_delete:
 # Notification
 
 class notification_get:
-    def GET(self):
-        return notification.get()
+    def GET(self,event):
+        return notification.get(event)
 
 
 
@@ -243,5 +243,5 @@ if __name__ == "__main__":
     # start web server
     web.config.debug = False
     app = EnhancedWebApp(urls, globals())
-    webbrowser.open('http://127.0.0.1:'+str(default_listener_port),new=2)
-    app.run(port=default_listener_port)
+    webbrowser.open('http://127.0.0.1:'+str(listen_port),new=2)
+    app.run(address = listen_address , port=listen_port)

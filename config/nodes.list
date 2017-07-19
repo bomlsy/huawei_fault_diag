@@ -7,7 +7,11 @@
   {
     "username": "dking", 
     "authtype": "key", 
-    "key": "/home/dking/.ssh/id_rsa", 
+    "key": "id_rsa", 
     "address": "127.0.0.1"
+  }, 
+  {
+    "password": "qweqweqwe", 
+    "address": "127.0.0.2"
   }
 ]

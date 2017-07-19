@@ -14,12 +14,14 @@ function collapsible_sidebar()
         if($(this).hasClass('closed')){
                 $(this).removeClass('closed');
                 $('.sidebar').animate({'left': '0px'},{'queue':false});
-                $('main').animate({'left' : '290px'},{'queue':false});
+                $('.container-fluid').animate({'left' : '280px'},{'queue':false});
+                $('.container-fluid').animate({'width' : $('body').width()-300 },{'queue':false});
             }
     	else{
                 $(this).addClass('closed');
                 $('.sidebar').animate({'left': '-260px'},{'queue':false});
-                $('main').animate({'left' : '0px'},{'queue':false}); 
+                $('.container-fluid').animate({'left' : '0px'},{'queue':false}); 
+                $('.container-fluid').animate({'width' : '100%'},{'queue':false});
             }
     });
 }

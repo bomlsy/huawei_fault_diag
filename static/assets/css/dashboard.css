@@ -1,0 +1,28 @@
+
+
+/*
+.board in Dashboard
+*/
+
+.board .panel {
+  padding: 25px 15px;
+  border:none;
+  background:#fff;
+}
+.board .number{
+  float:left;
+}
+.board .icon{
+  float:right;
+}
+.board .panel .icon .fa {
+  color: #FFFFFF;
+  background: #00AAFF;
+  padding: 19px;
+}
+.panel-primary{
+  display:inline-block;
+  margin-bottom: 30px;
+  width:100%;
+}
+

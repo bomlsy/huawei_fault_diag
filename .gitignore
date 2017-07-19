@@ -1,5 +1,9 @@
-# skip cache
-cache
+# folder structure
+cache/*
+!cache/.gitkeep
+config/keyfile/*
+!config/keyfile/.gitkeep
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -16,7 +16,7 @@ class Node:
     # STATUS
     #  1 connected
     #  0 connecting
-    # -1 not connected (normally)
+    # -1 disconnected (normally)
     # -2 access error
     # -3 timeout
     status = -1
@@ -44,7 +44,7 @@ class Node:
                 self.client.set_missing_host_key_policy(ssh.AutoAddPolicy())
                 if self.config['authtype'] == 'key':
                     self.client.connect(hostname = self.config['address'], port = self.config['port'],
-                                        username = self.config['username'], key_filename = self.config['key'],
+                                        username = self.config['username'], key_filename = os.path.join(os.getcwd(),'config','keyfile',self.config['key']),
                                         password = self.config['password'])
                 elif self.config['authtype'] == 'password':
                     self.client.connect(hostname = self.config['address'], port = self.config['port'],
@@ -59,16 +59,14 @@ class Node:
                 self.status = 1
                 self.client.exec_command('mkdir -p log_analyser')
                 th = threading.Thread(target = self.daemon)
-                th.setDaemon(True)
+                th.daemon=True
                 th.start()
                 # push notification
-                msg_update = {'event': 'update', 'id': self.config['id'],
-                              'content': {'status':self.status, 'hostname':self.config['hostname']}}
-                self.msg.put(msg_update)
+                self.msg.put('update',self.getBasicStatus())
 
         except AuthenticationException:
             self.status = -2
-        except (socket.error, NoValidConnectionsError):
+        except:
             self.status = -3
 
     def disconnect(self):
@@ -77,9 +75,28 @@ class Node:
             self.client.exec_command('rm -rf log_analyser')
             self.client.close()
             # push notification
-            msg_update = {'event': 'update', 'id': self.config['id'],
-                          'content': {'status': self.status, 'hostname': self.config['hostname']}}
-            self.msg.put(msg_update)
+            self.msg.put('update', self.getBasicStatus())
+
+
+    def getBasicStatus(self):
+        state = {}
+        state['hostname'] = self['hostname']
+        state['address'] = self.config['address']
+        state['id'] = self['id']
+        state['status'] = self['status']
+        return state
+
+
+    def getDetailStatus(self):
+        state = {}
+        state['hostname'] = self['hostname']
+        state['id'] = self['id']
+        state['status'] = self['status']
+        state['username'] = self.config['username']
+        state['authtype'] = self.config['authtype']
+        state['address'] = self.config['address']
+        state['port'] = self.config['port']
+        return state
 
     def daemon(self):
         tp = self.client.get_transport()
@@ -188,22 +205,22 @@ class Nodes:
         for nodeaccess in self.access.full_access_set:
             node = Node(nodeaccess)
             self.nodes.append(node)
-        th = threading.Thread(target=self.daemon())
-        th.setDaemon(True)
+        th = threading.Thread(target=self.daemon)
+        th.daemon=True
         th.start()
 
     def connectAllNodes(self):
         for node in self.nodes:
             th = threading.Thread(target = node.connect)
             self.connect_threads.append(th)
-            th.setDaemon(True)
+            th.daemon=True
             th.start()
 
     def disconnectAllNodes(self):
         for node in self.nodes:
             th = threading.Thread(target = node.disconnect)
             self.disconnect_threads.append(th)
-            th.setDaemon(True)
+            th.daemon=True
             th.start()
 
     def connectNode(self, nodeid):
@@ -213,7 +230,7 @@ class Nodes:
         if node:
             th = threading.Thread(target = node.connect)
             self.connect_threads.append(th)
-            th.setDaemon(True)
+            th.daemon=True
             th.start()
             return '{"msg":"Node ' + str(nodeid) +': ' + node['hostname'] + ' Connecting"}'
         else:
@@ -226,7 +243,7 @@ class Nodes:
         if node:
             th = threading.Thread(target = node.disconnect)
             self.disconnect_threads.append(th)
-            th.setDaemon(True)
+            th.daemon=True
             th.start()
             return '{"msg":"Node ' + str(nodeid) +': ' + node['hostname'] + ' Disconnecting"}'
         else:
@@ -237,77 +254,63 @@ class Nodes:
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
-            state = {}
-            state['hostname'] = node['hostname']
-            state['id'] = node['id']
-            state['status'] = node['status']
-            return json.dumps(state)
+            return json.dumps(node.getBasicStatus())
         else:
             return '{"id":%d, "msg":"No such node %d"}' % (nodeid,nodeid)
 
     def getAllBasicStatus(self):
         states = []
         for node in self.nodes:
-            state = {}
-            state['hostname'] = node['hostname']
-            state['id'] = node['id']
-            state['status'] = node['status']
-            states.append(state)
+            states.append(node.getBasicStatus())
         return json.dumps(states)
 
-    def getDetailedStatus(self, nodeid):
+    def getDetailStatus(self, nodeid):
         if isinstance(nodeid, unicode) or isinstance(nodeid, str):
             nodeid=int(nodeid)
         node = self.getNode(nodeid)
         if node:
-            state = {}
-            state['hostname'] = node['hostname']
-            state['id'] = node['id']
-            state['status'] = node['status']
-            state['username'] = node.config['username']
-            state['authtype'] = node.config['authtype']
-            state['address'] = node.config['address']
-            state['port'] = node.access['port']
-            return json.dumps(state)
+            return json.dumps(node.getDetailStatus())
         else:
             return '{"id":%d, "msg":"No such node %d"}' % (nodeid, nodeid)
 
-    def getAllDetailedStatus(self):
+    def getAllDetailStatus(self):
         states = []
         for node in self.nodes:
-            state = {}
-            state['hostname'] = node['hostname']
-            state['id'] = node['id']
-            state['status'] = node['status']
-            state['username'] = node.config['username']
-            state['authtype'] = node.config['authtype']
-            state['address'] = node.config['address']
-            state['port'] = node.config['port']
-            states.append(state)
+            states.append(node.getDetailStatus())
         return json.dumps(states)
 
-    # async
     def executeCmd(self, nodeid, cmd):
         node = self.getNode(nodeid)
         if node and node['status'] == 1:
-            res = node.execute_cmd(cmd)
-            self.msg.put({'event': 'execute_cmd', 'content': {'command': cmd, 'result': res }, 'node':nodeid})
+            def task():
+                res = node.execute_cmd(cmd)
+                self.msg.put('cmd',{'command': cmd, 'result': res , 'nodeid':nodeid})
+            th = threading.Thread(target = task)
+            th.daemon=True
+            th.start()
             return '{"id":%d, "msg":"Cmd `%s` sent to %d "}' % (nodeid ,cmd , nodeid)
         else:
             return '{"id":%d, "msg":"No such node %d or node not running"}' % (nodeid, nodeid)
 
     def executeCmdAll(self, cmd):
         for node in self.nodes:
-            if node['status'] == 1:
-                res = node.execute(cmd)
-                self.msg.put({'event': 'execute_cmd', 'content': {'command': cmd, 'result': res }, 'node': node['id']})
+            def task():
+                res = node.execute_cmd(cmd)
+                self.msg.put('cmd', {'command': cmd, 'result': res, 'nodeid': node['id']})
+            th = threading.Thread(target = task)
+            th.daemon=True
+            th.start()
         return '{"id":"all", "msg":"Cmd `%s` sent to all nodes"}' % cmd
 
     def executeMod(self, nodeid, mod, param=''):
         node = self.getNode(nodeid)
         if node and node['status'] == 1:
-            res = node.execute_mod(mod,param)
-            self.msg.put({'event': 'execute_mod', 'content': {'module': mod, 'result': res }, 'node': node['id']})
+            def task():
+                res = node.execute_mod(mod, param)
+                self.msg.put('mod', {'command': mod, 'result': res, 'nodeid': nodeid})
+            th = threading.Thread(target = task)
+            th.daemon=True
+            th.start()
             return '{"id":%d, "msg":"Module `%s` executed on %d "}' % (nodeid ,mod , nodeid)
         else:
             return '{"msg":"no such node or node not running"}'
@@ -315,7 +318,11 @@ class Nodes:
     def executeModAll(self, mod, param=''):
         for node in self.nodes:
             if node['status'] == 1:
-                res = node.execute_mod(mod,param)
-                self.msg.put({'event': 'execute_mod', 'content': {'module': mod, 'result': res }, 'node': node['id']})
+                def task():
+                    res = node.execute_mod(mod, param)
+                    self.msg.put('mod', {'command': mod, 'result': res, 'nodeid': node['id']})
+                th = threading.Thread(target = task)
+                th.daemon = True
+                th.start()
         return '{"id":"all", "msg":"Module `%s` executed on all noeds"}' % mod
 

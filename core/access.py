@@ -28,7 +28,7 @@ class Access:
         self.full_accessfile = ""
         self.daemon_run = True
         th = threading.Thread(target = self.daemon)
-        th.setDaemon(True)
+        th.daemon=True
         th.start()
 
 
@@ -109,8 +109,8 @@ class Access:
     def load(self, accessfile):
         try:
             self.accessfile = accessfile
-            self.user_accessfile = 'config/' + self.accessfile
-            self.full_accessfile = 'cache/full_' + os.path.basename(self.user_accessfile)
+            self.user_accessfile = os.path.join('config', self.accessfile)
+            self.full_accessfile = os.path.join('cache', 'full_'+os.path.basename(self.user_accessfile))
             # error as no such config
             if not os.path.exists(self.user_accessfile):
                 return
@@ -158,7 +158,7 @@ class Access:
 
     def daemon(self):
         while self.daemon_run:
-            sleep(access_daemon_interval)
+            sleep(cache_daemon_interval)
             global cache_ready2save
             if cache_ready2save:
                 cache_ready2save = False
