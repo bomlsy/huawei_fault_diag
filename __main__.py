@@ -12,6 +12,8 @@ from core.modulefile import ModuleFile
 from core.nodes import *
 from core.notification import Notification
 
+from core.envsetup import setup_env
+
 # When a request is unprocessed, two types of text might be returned as HTML content:
 # 1: None
 # 2: not found
@@ -199,15 +201,24 @@ class notification_get:
 
 
 
-
-
-
-
 class EnhancedWebApp(web.application):
     def run(self,address="127.0.0.1", port=8080, *middleware):
         return web.httpserver.runsimple(self.wsgifunc(*middleware), (address, port))
 
 
+
+setup_env()
+
+# init a notification queue handler
+notification = Notification()
+
+# load Nodes and auto connect
+nodes = Nodes()
+nodes.loadAccess(access_file_name)
+nodes.connectAllNodes()
+
+
+# exit handler --
 def exit_handler(signum,sock):
     print "Ctrl-C (%d) Captured. Disconnecting..." % signum
     nodes.access.stopdaemon()
@@ -216,32 +227,13 @@ def exit_handler(signum,sock):
     print "Server stopped."
     exit(0)
 
-
-if __name__ == "__main__":
-    signal.signal(signal.SIGINT, exit_handler)
-    signal.signal(signal.SIGTERM, exit_handler)
-
-    # ensure current directory
-    os.chdir(sys.path[0])
-    # mkdir cache
-    if os.path.exists('cache'):
-        if os.path.isfile('cache'):
-            os.remove('cache')
-            os.mkdir('cache')
-    else:
-        os.mkdir('cache')
+signal.signal(signal.SIGINT, exit_handler)
+signal.signal(signal.SIGTERM, exit_handler)
+# -- exit handler
 
 
-    # init a notification queue handler
-    notification = Notification()
-
-    # load Nodes and auto connect
-    nodes = Nodes()
-    nodes.loadAccess('nodes.list')
-    nodes.connectAllNodes()
-
-    # start web server
-    web.config.debug = False
-    app = EnhancedWebApp(urls, globals())
-    webbrowser.open('http://127.0.0.1:'+str(listen_port),new=2)
-    app.run(address = listen_address , port=listen_port)
+# start web server
+web.config.debug = False
+app = EnhancedWebApp(urls, globals())
+webbrowser.open('http://127.0.0.1:'+str(listen_port),new=2)
+app.run(address = listen_address , port=listen_port)
