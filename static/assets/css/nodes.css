@@ -1,0 +1,64 @@
+#row_1{
+	height: 10%;
+	max-height: 10%;
+}
+
+#row_2{
+	height: 70%;
+	max-height: 70%;
+}
+
+.log
+{
+	width: 100%;
+	height: 100%;
+	overflow-y: auto;
+	resize: none;
+}
+
+
+.log:hover {
+  box-shadow: 0 0 20px #00AAFF;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
+.help {
+  margin-left: 10px;
+  margin-right: 10px;
+
+  height: 40px;
+  width: 40px;
+  
+  vertical-align: bottom;
+
+  background-color: white;
+  color: #00AAFF;
+  font-size: 16px;
+  text-align: center;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: #00AAFF;
+  border-radius: 2px; 
+}
+
+.help:hover{
+  box-shadow: 0 0 15px #00AAFF;
+  transition: box-shadow 0.5s;
+  -moz-transition: box-shadow 0.5s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.5s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.5s; /* Opera */
+}
+
+.help.yellow{
+  color: #FFCE56;
+  border-color: #FFCE56;
+}
+
+.help.yellow:hover{
+  box-shadow: 0 0 15px #FFCE56;
+}

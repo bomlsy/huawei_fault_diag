@@ -21,13 +21,16 @@ class Node:
     # -3 timeout
     status = -1
 
-    def __init__(self, config):
-        if isinstance(config, dict):
-            self.config = config
-            self.status = 0
+    def __init__(self):
             self.client = None
             self.chan = None
+            self.config = None
             self.msg = Notification()
+            self.status = -1
+
+    def loadConfig(self,config):
+        if isinstance(config, dict):
+            self.config = config
 
     def __getitem__(self, item):
         if item == 'id':
@@ -43,11 +46,11 @@ class Node:
                 self.client = ssh.SSHClient()
                 self.client.set_missing_host_key_policy(ssh.AutoAddPolicy())
                 if self.config['authtype'] == 'key':
-                    self.client.connect(hostname = self.config['address'], port = self.config['port'],
+                    self.client.connect(hostname = self.config['address'], port = int(self.config['port']),
                                         username = self.config['username'], key_filename = os.path.join(os.getcwd(),'config','keyfile',self.config['key']),
                                         password = self.config['password'])
                 elif self.config['authtype'] == 'password':
-                    self.client.connect(hostname = self.config['address'], port = self.config['port'],
+                    self.client.connect(hostname = self.config['address'], port = int(self.config['port']),
                                         username = self.config['username'], password = self.config['password'])
 
                 stdin, stdout, stderr = self.client.exec_command('hostname')
@@ -163,10 +166,13 @@ class Nodes:
                 if not self.disconnect_threads[idx].isAlive():
                     del self.disconnect_threads[idx]
 
-    def addNode(self,access_str):
-        full_ac = self.access.addAccess(access_str)
+    def addNode(self,ac):
+        full_ac = self.access.addAccess(ac)
         if full_ac:
-            self.nodes.append(Node(full_ac))
+            node = Node()
+            node.loadConfig(full_ac)
+            node.connect()
+            self.nodes.append(node)
             return full_ac['id']
         else:
             return -1
@@ -179,15 +185,16 @@ class Nodes:
         else:
             return False
 
-    def updateNode(self,nodeid,access_str):
-        full_ac = self.access.updateAccess(nodeid, access_str)
+    def updateNode(self,nodeid,access_json):
+        full_ac = self.access.updateAccess(nodeid, access_json)
+        full_ac['id']=nodeid
         if full_ac:
             if isinstance(nodeid, unicode) or isinstance(nodeid, str):
                 nodeid=int(nodeid)
             for index,node in enumerate(self.nodes):
                 if node['id'] == nodeid:
                     node.disconnect()
-                    self.nodes[index] = Node(full_ac)
+                    node.loadConfig(full_ac)
                     return True
         return False
 
@@ -203,7 +210,8 @@ class Nodes:
         self.access = Access()
         self.access.load(filepath)
         for nodeaccess in self.access.full_access_set:
-            node = Node(nodeaccess)
+            node = Node()
+            node.loadConfig(nodeaccess)
             self.nodes.append(node)
         th = threading.Thread(target=self.daemon)
         th.daemon=True

@@ -5,11 +5,11 @@ body{
 
 
 .container-fluid{
-  width: 100%;
   z-index:-1;
   position: absolute;
   left: 280px;
   height: calc(100% - 70px);
+  max-height: calc(100% - 70px);
   width: calc(100% - 300px);
 }
 
@@ -216,11 +216,12 @@ Page Header
     margin: 0 30px;
 }
 .page-header {
-    margin: 0;
-    border-bottom: 1px solid transparent;
-    text-align: left;
-    padding: 32px 22px 32px 15px;
-    color: #323232;
+  margin: 0;
+  height: 15%;
+  border-bottom: 1px solid transparent;
+  text-align: left;
+  padding: 32px 22px 32px 15px;
+  color: #323232;
 }
 .page-header small {
 display: inline;
@@ -252,13 +253,14 @@ h1.page-header small {
 
 .rectangle-list {
   overflow: auto;
+  margin-bottom: 0;
 }
 
 .rectangle-list li{
   font-size: large;
   position: relative;
   display: block;
-  margin: .5em 0 .5em 2.5em;
+  margin: .5em 0 .5em 1.5em;
   background: #ddd;
   color: #444;
   -webkit-transition: all .3s ease-out;
@@ -296,28 +298,133 @@ h1.page-header small {
 ul{
   font: 15px 'trebuchet MS', 'lucida sans';
   padding: 0;
-  margin:0 0 4em;
+  width: 100%;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
 }
 ul li{
   list-style:none outside none;
+  line-height: 100%;
 }
 
 
 
 .flat-button {
-    float: right;
-    height: 40px;
-    width: 80px;
 
+  margin-left: 10px;
+  margin-right: 10px;
 
-    background-color: white;
-    color: #333;
-    font-size: large;
-    text-align: center;
+  height: 40px;
+  width: 90px;
+  
+  vertical-align: bottom;
 
-    border-width: 0px;
+  background-color: white;
+  color: #00AAFF;
+  font-size: 16px;
+  text-align: center;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: #00AAFF;
+  border-radius: 2px; 
 }
+
+
+.flat-button.right {
+  float: right;
+}
+
+.flat-button.large{
+  height: 40px;
+  width: 120px;
+  font-size: 16px;
+}
+
+.flat-button.red{
+  border-color: #FF6384;
+  color: #FF6384;
+}
+
+.flat-button.active.red
+{
+  box-shadow: 0 0 15px #FF6384;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+.flat-button.red:hover
+{
+
+  box-shadow: 0 0 15px #FF6384;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
+.flat-button.yellow{
+  border-color: #FFCE56;
+  color: #FFCE56;
+}
+
+.flat-button.active.yellow
+{
+  box-shadow: 0 0 15px #FFCE56;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+.flat-button.yellow:hover
+{
+  box-shadow: 0 0 15px #FFCE56;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
+
+.flat-button.gray{
+  border-color: #999999;
+  color: #999999;
+}
+
+.flat-button.active.gray
+{
+  box-shadow: 0 0 15px #999999;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+.flat-button.gray:hover
+{
+  box-shadow: 0 0 15px #999999;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
+
+.flat-button:hover
+{
+  box-shadow: 0 0 15px #00AAFF;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
 
 .flat-button.active
 {
@@ -327,3 +434,35 @@ ul li{
   -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
   -o-transition: box-shadow 0.6s; /* Opera */
 }
+
+
+/*
+Input
+*/
+
+
+input.flat {
+  margin-left: 10px;
+  margin-right: 10px;
+  height: 40px;
+  width: 120px;
+  font-size: 16px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 2px;
+  border-color: #00AAFF;
+  background: white;
+  color: black;
+  padding: 0;
+  text-align: left;
+}
+
+input.flat:hover {
+  box-shadow: 0px 0px 15px #00AAFF;
+  transition: box-shadow 0.4s;
+  -moz-transition: box-shadow 0.4s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.4s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.4s; /* Opera */
+}
+
+

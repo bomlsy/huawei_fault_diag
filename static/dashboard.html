@@ -29,13 +29,13 @@
         <a href="dashboard.html" class="list-group-item active"><i class="fa fa-dashboard"></i> Dashboard</a>
         <a href="nodes.html" class="list-group-item"><i class="fa fa-sitemap"></i> Nodes</a>
         <a href="task.html" class="list-group-item"><i class="fa fa-tasks"></i> Task</a>
-        <a href="#menu3" class="list-group-item collapsed " data-toggle="collapse" data-parent="#sidebar" aria-expanded="false"><i class="fa fa-cogs"></i> Configure</a>
+        <a href="#menu3" class="list-group-item collapsed" data-toggle="collapse" data-parent="#sidebar" aria-expanded="false"><i class="fa fa-cogs"></i> Configure</a>
         <div class="collapse" id="menu3">
             <a href="access.html" class="list-group-item"><i class="fa fa-cog"></i> Access</a>
             <a href="modules.html" class="list-group-item"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item"><i class="fa fa-key"></i> Keys</a>
         </div>
-        <a href="history.html" class="list-group-item"><i class="fa fa-list"></i> History</a>
+
     </div>
 </div>
 
@@ -43,9 +43,9 @@
 
     <h1 class="page-header">
         Dashboard <small>当前状态</small>
-        <button id="btn_sync" class="flat-button active"><span class="fa fa-refresh fa-spin"></span>  Sync</button>
+        <button id="btn_sync" class="flat-button active right"><span class="fa fa-refresh fa-spin"></span>  Sync</button>
     </h1>
-    <div class="row">
+    <div class="row" id="row_1">
         <div class="col-md-4">
             <div class="board">
                 <div class="panel panel-primary">
@@ -91,16 +91,16 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" id="row_2">
     
-        <div class="col-md-4">
+        <div class="col-md-3 offset-md-1 center">
             <canvas id="node_donut">
             </canvas>
         </div>
 
-        <div class="col-md-8">
-                <ul class="rectangle-list" id="node_list">
-                </ul>
+        <div class="col-md-5 offset-md-1 center">
+            <ul class="rectangle-list" id="node_list">
+            </ul>
         </div>
 
     </div>

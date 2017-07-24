@@ -1,12 +1,10 @@
 #!/usr/bin/python2.7
 # -*- coding: UTF-8 -*-
 import signal
-import sys
 import webbrowser
 
 import web
 
-from core.history import History
 from core.keyfile import KeyFile
 from core.modulefile import ModuleFile
 from core.nodes import *
@@ -39,15 +37,21 @@ urls = (
     '/key/get', 'key_get',
     '/key/add/(.*)', 'key_add',                     # keyname (empty for original name)
     '/key/delete/(.+)', 'key_delete',               # keyname
-    '/history/add', 'history_add',
-    '/history/save', 'history_save',                # POST history=textarea.value
-    '/history/delete', 'history_delete',
+    # '/history/add', 'history_add',
+    # '/history/save', 'history_save',                # POST history=textarea.value
+    # '/history/delete', 'history_delete',
 )
 
 
 class homepage:
     def GET(self):
-        return web.seeother('/static/dashboard.html')
+        html = '''
+        <script>
+        localStorage.clear();
+        window.location.replace("/static/dashboard.html");
+        </script>
+        '''
+        return html
 
 
 # Node
@@ -85,7 +89,7 @@ class node_disconnect:
 
 class node_add:
     def POST(self):
-        req = web.input()
+        req = json.loads(web.data())
         if req.has_key('access'):
             nodeid = nodes.addNode(req.get('access'))
             if nodeid >= 0:
@@ -106,7 +110,7 @@ class node_update:
     def POST(self,nodeid):
         if nodeid.isdigit():
             nodeid = int(nodeid)
-            req = web.input()
+            req = json.loads(web.data())
             if req.has_key('access'):
                 if nodes.updateNode(nodeid, req.get('access')):
                     return '{"id": %d, "msg":"Node %d Updated"}' % (nodeid,nodeid)
@@ -176,21 +180,21 @@ class key_delete:
 
 
 # History
-
-class history_get:
-    def GET(self):
-        return History().get()
-
-
-class history_save:
-    def POST(self):
-        req = web.input()
-        if req.has_key('history'):
-            return History().save(req['history'])
-
-class history_delete:
-    def GET(self):
-        return History().delete()
+#
+# class history_get:
+#     def GET(self):
+#         return History().get()
+#
+#
+# class history_save:
+#     def POST(self):
+#         req = web.input()
+#         if req.has_key('history'):
+#             return History().save(req['history'])
+#
+# class history_delete:
+#     def GET(self):
+#         return History().delete()
 
 
 # Notification

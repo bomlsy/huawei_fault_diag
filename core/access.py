@@ -22,7 +22,6 @@ class Access:
         self.status = 0
         self.user_access_set = []
         self.full_access_set = []
-        self.msg = Notification()
         self.accessfile = ""
         self.user_accessfile = ""
         self.full_accessfile = ""
@@ -65,8 +64,7 @@ class Access:
 
         return full_access
 
-    def addAccess(self,access_str):
-        ac=json.loads(access_str)
+    def addAccess(self,ac):
         if ac.has_key('address') and (
                     ac.has_key('password') or (
                     ac.has_key('authtype') and ac.get('authtype')=='key' and ac.has_key('key'))):
@@ -89,8 +87,8 @@ class Access:
                 return True
         return False
 
-    def updateAccess(self,nodeid,access_str):
-        new_uac=json.loads(access_str)
+    def updateAccess(self,nodeid,access_json):
+        new_uac=access_json
         if isinstance(nodeid, unicode):
             nodeid = int(nodeid)
         for index,full_ac in enumerate(self.full_access_set):

@@ -11,7 +11,11 @@
     "address": "127.0.0.1"
   }, 
   {
-    "password": "qweqweqwe", 
-    "address": "127.0.0.2"
+    "username": "dking", 
+    "authtype": "password", 
+    "key": "", 
+    "address": "127.0.0.3", 
+    "password": null, 
+    "port": "22"
   }
 ]

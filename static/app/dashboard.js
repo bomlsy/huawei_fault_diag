@@ -5,7 +5,7 @@ var current_view = 0;
 
 var sync_on = true;
 
-function show_basic_list(idx)
+function show_basic_chart(idx)
 {
 	current_view = idx;
 	function change_bg_color(color){$('.rectangle-list li').hover(function(){$(this).css('background',color);}, function() {$(this).css('background','#ddd');});}
@@ -51,7 +51,6 @@ function show_basic_list(idx)
 			// statements_def
 			break;
 	}
-
 }
 
 
@@ -92,39 +91,42 @@ function init_donut(msgs)
 	donut_node.data.datasets[0].data=[list_connected.length, list_disconnected.length, list_connecting.length , list_timeout.length, list_error.length];
 	donut_node.update();
 	donut_inited = true;
-	show_basic_list(current_view);
+	show_basic_chart(current_view);
 }
 
 function update_donut(msgs)
 {
 	var status_all = JSON.parse(msgs);
-	for (var st in status_all)
+	if(status_all.length)
 	{
-		var node = status_all[st];
-		cleanOldState(node.id);
-		switch (node.status) {
-			case 1:
-		 		list_connected.push(node);
-		 		break;
-		 	case 0:
-		 		list_connecting.push(node);
-		 		break;
-		 	case -1:
-		 		list_disconnected.push(node);
-		 		break;
-		 	case -2:
-		 		list_error.push(node);
-		 		break;
-		 	case -3:
-		 		list_timeout.push(node);
-		 		break;
-		 	default:
-		 		break;
-		 } 
+		for (var st in status_all)
+		{
+			var node = status_all[st];
+			cleanOldState(node.id);
+			switch (node.status) {
+				case 1:
+			 		list_connected.push(node);
+			 		break;
+			 	case 0:
+			 		list_connecting.push(node);
+			 		break;
+			 	case -1:
+			 		list_disconnected.push(node);
+			 		break;
+			 	case -2:
+			 		list_error.push(node);
+			 		break;
+			 	case -3:
+			 		list_timeout.push(node);
+			 		break;
+			 	default:
+			 		break;
+			 } 
+		}
+		donut_node.data.datasets[0].data=[list_connected.length, list_disconnected.length, list_connecting.length , list_timeout.length, list_error.length];
+		donut_node.update();
+		show_basic_chart(current_view);
 	}
-	donut_node.data.datasets[0].data=[list_connected.length, list_disconnected.length, list_connecting.length , list_timeout.length, list_error.length];
-	donut_node.update();
-	show_basic_list(current_view);
 }
 
 
@@ -157,7 +159,7 @@ var node_opt = {
 	animation: { animateScale: true},
 	onClick : function(event,elem)
 	{
-		if(elem.length > 0) show_basic_list(elem[0]._index);
+		if(elem.length > 0) show_basic_chart(elem[0]._index);
 	}
 }
 
@@ -169,13 +171,6 @@ donut_node = new Chart(ctx,{type:"doughnut", data:node_data, options:node_opt});
 
 $.get("/node/get/all",init_donut);
 init_blocks();
-
-
-// Scrollable area size
-
-$('canvas').on('resize',function(){ 
-	$('.rectangle-list').height($('canvas').height());
-});
 
 
 

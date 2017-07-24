@@ -6,6 +6,7 @@
 
 .board .panel {
   padding: 25px 15px;
+  height: 100%;
   border:none;
   background:#fff;
 }
@@ -26,3 +27,22 @@
   width:100%;
 }
 
+/* center */
+
+
+.center {
+  display: flex;
+  justify-content:center;
+  align-items:center;
+  }
+
+
+#row_1{
+  height: 20%;
+  max-height: 20%;
+}
+
+#row_2{
+  height: 60%;
+  max-height: 60%;
+}

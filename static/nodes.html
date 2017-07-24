@@ -8,6 +8,7 @@
     <link href='assets/css/font-awesome.min.css' rel='stylesheet' />
 
     <link href="assets/css/custom-style.css" rel="stylesheet" />
+    <link href="assets/css/nodes.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -33,34 +34,187 @@
             <a href="modules.html" class="list-group-item"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item"><i class="fa fa-key"></i> Keys</a>
         </div>
-        <a href="history.html" class="list-group-item"><i class="fa fa-list"></i> History</a>
+
     </div>
 </div>
 
 <div class="container-fluid">
-<main>
     <h1 class="page-header">
         Node <small>结点状态</small>
+        <button id="btn_sync" class="flat-button active right"><span class="fa fa-refresh fa-spin"></span>  Sync</button>
     </h1>
-    <div class="row">
-        <div class="col-md-4">
-
+    <div class="row" id="row_1">
+        <div class="col-md-9">
+            <button class="help yellow" data-toggle="modal" data-target="#helpmodal"><span class="fa fa-question fa-2x"></span></button>
+            <input class="flat" placeholder="NSL" id="nsl"></input>
+            <button class="flat-button blue large" onclick="connect_selected()"><span class="fa fa-play"></span> Connect</button>
+            <button class="flat-button gray large" onclick="disconnect_selected()"><span class="fa fa-stop"></span> Disconnect</button>
+            <button class="flat-button red"><span class="fa fa-close"></span> Delete</button>
         </div>
-
-        <div class="col-md-4">
-
+        <div class="col-md-3">
+            <button class="flat-button" data-toggle="modal" data-target="#modal_addnode"><span class="fa fa-plus"></span> Add</button>
+            <button class="flat-button yellow"><span class="fa fa-refresh"></span> Reload</button>
         </div>
-
-        <div class="col-md-4">
-
-        </div>
-
     </div>
 
-</main>
+    <div class="row" id="row_2">
+        <div class="col-md-8">
+            <ul class="rectangle-list" id="node_list">
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <textarea readonly class="log" id="logarea"></textarea>
+        </div>
+    </div>
+
+
+
 </div>
 
 
+<div class="modal fade" id="helpmodal" tabindex="-2" role="dialog" aria-labelledby="helplabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="helplabel">Nodes Selecting Language(NSL)</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body">
+            NSL是本项目中用于快速选择结点的语言。通过在前端运行的简单解析器实现。<br><br>
+            <b>一个典型的NSL语言示例如下：</b><br>
+            -all,1-20,-3,-(10-20),10,+11,+(15-20),+all,all<br><br>
+            <b>解析规则如下：</b><br>
+            在初始状态，默认包含所有结点。(Select All)<br>
+            NSU(Unit)以半角逗号为分隔，从左往右依次处理。最后得出的集合即为被选择的结点集合。<br>
+            结点选择以结点ID(#ID)为代表。1即为#1结点。<br>
+            +/-代表添加/删除结点/结点集。+可省略。<br>
+            all代表所有结点。<br>
+            a-b代表{a,a+1,a+2,...,b}<br>
+            空格将被忽略<br>
+            <b>注意</b>：暂未支持复杂的嵌套规则。NSL语言以逗号为绝对分隔符。<br><br>
+            <b>上述示例的解析过程为：</b><br>
+            先取消选择所有结点(Unselect All);<br>
+            批量选择1到20号结点;<br>
+            取消选择3号结点;<br>
+            取消选择10到20号结点;<br>
+            选择10号结点;<br>
+            选择11号结点;<br>
+            选择15到20号结点;<br>
+            选择全部;<br>
+            选择全部;<br>
+            最终结果为：全部结点。所有结点将被选中以执行命令。<br>
+            
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="flat-button" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="modal_nodedetail" tabindex="-1" role="dialog" aria-labelledby="modal_detail_title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal_detail_title">Node Detail</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body" id="modal_detail_body">
+                <div class="row">
+                    <label for="modal_nodeid" class="col-sm-3 control-label">Node ID</label>
+                    <p id="modal_nodeid"  class="col-sm-9" ></p>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_hostname" class="col-sm-3 control-label">Hostname</label>
+                    <p id="modal_hostname"  class="col-sm-9" ></p>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_status" class="col-sm-3 control-label">Status</label>
+                    <p id="modal_status"  class="col-sm-9" ></p>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_username" class="col-sm-3 control-label">Username</label>
+                    <div class="col-sm-6"><input id="modal_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_address" class="col-sm-3 control-label">Address</label>
+                    <div class="col-sm-6"><input id="modal_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_port" class="col-sm-3 control-label">Port</label>
+                    <div class="col-sm-6"><input id="modal_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="btn_authtype" class="col-sm-3 control-label">Authentication</label>
+                    <div id="btn_authtype"  class="col-sm-2" ></div>
+                    <div class="col-md-4">
+                    <input id="passwordtext" class="flat" style="margin-left: 0; width: 100%;"  placeholder="Password" value=""/>
+                    <select class="form-control" id="keyfileselect"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="delete_node(this)">Delete</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="update_node(this)">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="modal_addnode" tabindex="-1" role="dialog" aria-labelledby="modal_addnode_title" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal_addnode_title">Add Node</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body" id="modal_addnode_body">
+                <div class="row">
+                    <label for="modal_addnode_username" class="col-sm-3 control-label">Username</label>
+                    <div class="col-sm-6"><input id="modal_addnode_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_addnode_address" class="col-sm-3 control-label">Address</label>
+                    <div class="col-sm-6"><input id="modal_addnode_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_addnode_port" class="col-sm-3 control-label">Port</label>
+                    <div class="col-sm-6"><input id="modal_addnode_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="btn_addnode_authtype" class="col-sm-3 control-label">Authentication</label>
+                    <div id="btn_addnode_authtype"  class="col-sm-2" >
+
+                        <button class="help" id="btn_passwd" onclick="$('#btn_passwd').hide();$('#btn_key').show(); $('#modal_addnode_key').show();$('#modal_addnode_password').hide();"><span class="fa fa-font"></span></button>
+                        <button class="help" id="btn_key" onclick="$('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();"><span class="fa fa-file"></span></button>
+
+                    </div>
+                    <div class="col-md-4">
+                    <div id="">
+                        <input id="modal_addnode_password" class="flat" style="margin-left: 0; width: 100%;"  placeholder="Password" value=""/>
+                        <select class="form-control" id="modal_addnode_key"></select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_node(this)">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <script src="assets/js/jquery-3.2.1.js"></script>
@@ -69,6 +223,7 @@
 
 
 <script src="app/common.js"></script>
+<script src="app/nodes.js"></script>
 
 
 </body>
