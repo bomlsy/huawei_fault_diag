@@ -56,6 +56,21 @@ function collapsible_sidebar()
 
 
 
+function addlog(logcontent) {
+    var time = new Date;
+    var hour = time.getHours();
+    if (hour < 10) hour = '0' + hour;
+    var minute = time.getMinutes();
+    if (minute < 10) minute = '0' + minute;
+    var second = time.getSeconds();
+    if (second < 10) second = '0' + second;
+    time = '[' + hour + ':' + minute + ':' + second + '] ';
+    $('#logarea').val( time + logcontent + '\n' + $('#logarea').val());
+    $('#logarea').scrollTop(1000000);
+}
+
+
+
 function NSL(nodes_id, nsl_str)
 {
     var nodeset = new Set(nodes_id);
@@ -73,8 +88,6 @@ function NSL(nodes_id, nsl_str)
                     if(nsu.indexOf('-') != -1){
                         var nodes_range = nsu.split('-');
                         if(nodes_range.length == 2){
-
-    console.log(nodes_range[0],nodes_range[1]);
                             for(var i=parseInt(nodes_range[0]);i<=parseInt(nodes_range[1]);i++){
                                 nodeset.delete(i);
                             }

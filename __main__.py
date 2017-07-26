@@ -29,17 +29,14 @@ urls = (
     '/node/delete/(.+)', 'node_delete',             # nodeid
     '/node/update/(.+)', 'node_update',             # nodeid, POST(new json access)
     '/module/get', 'module_get',
-    '/module/add/(.*)', 'module_add',               # module name (empty for original name), POST(description,default_argument)
+    '/module/add', 'module_add',                    # POST(name,content,description,default_argument)
     '/module/delete/(.+)', 'module_delete',         # module name
-    '/module/exec/(.+)/(.+)/(.*)', 'module_exec',   # nodeid, modname, param
-    '/cmd/exec/(.+)/(.+)', 'cmd_exec',              # nodeid, cmdstr
+    '/module/exec/(.+)/(.+)', 'module_exec',        # nodeid, modname, POST param
+    '/cmd/exec/(.+)', 'cmd_exec',                   # nodeid, POST(cmdstr)
     '/notification/get/(.+)', 'notification_get',
     '/key/get', 'key_get',
-    '/key/add/(.*)', 'key_add',                     # keyname (empty for original name)
+    '/key/add/(.+)', 'key_add',                     # keyname, POST content
     '/key/delete/(.+)', 'key_delete',               # keyname
-    # '/history/add', 'history_add',
-    # '/history/save', 'history_save',                # POST history=textarea.value
-    # '/history/delete', 'history_delete',
 )
 
 
@@ -120,7 +117,8 @@ class node_update:
 # Command
 
 class cmd_exec:
-    def GET(self, nodeid, cmd):
+    def POST(self, nodeid):
+        cmd = web.data()
         if nodeid.isdigit():
             nodeid = int(nodeid)
             return nodes.executeCmd(nodeid, cmd)
@@ -134,26 +132,22 @@ class module_get:
         return ModuleFile().get()
 
 class module_add:
-    def POST(self,modname):
-        mf=web.input(myfile = {})
-        if not mf.has_key('description'):
-            desc = ''
-        else:
-            desc = mf['description']
-        if not mf.has_key('default_argument'):
-            arg = ''
-        else:
-            arg = mf['default_argument']
-        if not modname:
-            modname = mf['myfile'].filename
-        return ModuleFile().add(modname, mf['myfile'].value, desc, arg)
+    def POST(self):
+        modinfo = json.loads(web.data())
+        modname = modinfo['module']
+        mfc=modinfo['content']
+        desc = modinfo['description']
+        arg = modinfo['argument']
+
+        return ModuleFile().add(modname, mfc, desc, arg)
 
 class module_delete:
     def GET(self,modname):
         return ModuleFile().delete(modname)
 
 class module_exec:
-    def GET(self, nodeid, mod, param):
+    def POST(self, nodeid, mod):
+        param=web.data()
         if nodeid.isdigit():
             nodeid = int(nodeid)
             return nodes.executeMod(nodeid, mod, param)
@@ -169,35 +163,13 @@ class key_get:
 
 class key_add:
     def POST(self,keyname):
-        kf = web.input(myfile = {})
-        if not keyname:
-            keyname = kf['myfile']
-        return KeyFile().add(keyname, kf['myfile'].value)
+        kf = web.data()
+        return KeyFile().add(keyname, kf)
 
 class key_delete:
     def GET(self,keyname):
         return KeyFile().delete(keyname)
 
-
-# History
-#
-# class history_get:
-#     def GET(self):
-#         return History().get()
-#
-#
-# class history_save:
-#     def POST(self):
-#         req = web.input()
-#         if req.has_key('history'):
-#             return History().save(req['history'])
-#
-# class history_delete:
-#     def GET(self):
-#         return History().delete()
-
-
-# Notification
 
 class notification_get:
     def GET(self,event):

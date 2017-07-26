@@ -5,21 +5,6 @@ var sync_on = true;
 var chart_inited = false;
 
 
-
-function addlog(logcontent) {
-    var time = new Date;
-    var hour = time.getHours();
-    if (hour < 10) hour = '0' + hour;
-    var minute = time.getMinutes();
-    if (minute < 10) minute = '0' + minute;
-    var second = time.getSeconds();
-    if (second < 10) second = '0' + second;
-    time = '[' + hour + ':' + minute + ':' + second + '] ';
-    $('#logarea').val( time + logcontent + '\n' + $('#logarea').val());
-    $('#logarea').scrollTop(1000000);
-}
-
-
 function connect(btn,nodeid)
 {
     btn.className="flat-button yellow";
@@ -46,38 +31,31 @@ function btn_conf(nodeid)
 		var nodeid = node.id;
 		var status = node.status;
 
-		var lastmsg="",buttonclass="",buttontext="",rowclass="",btn_onclick="";
+		var buttonclass="",buttontext="",btn_onclick="";
 	    switch (status) {
 	        case 1:
 	            buttontext = "Online";
 	            buttonclass = "flat-button";
 	            btn_onclick = "disconnect(this,"+ nodeid +")";
-	            lastmsg = "Connected";
 	            break;
 	        case 0:
 	            buttonclass = "flat-button yellow";
 	            buttontext = "Pending";
-	            lastmsg = "SSH connecting";
 	            break;
 	        case -1:
 	            buttontext = "Offline";
 	            buttonclass = "flat-button gray";
 	            btn_onclick = "connect(this,"+ nodeid +")";
-	            lastmsg = "Disconnected";
 	            break;
 	        case -2:
-	            rowclass="danger";
 	            buttontext = "Offline";
 	            buttonclass = "flat-button red";
 	            btn_onclick = "connect(this,"+ nodeid +")";
-	            lastmsg = "Access Error";
 	            break;
 	        case -3:
-	            rowclass="danger";
 	            buttontext = "Offline";
 	            buttonclass = "flat-button red";
 	            btn_onclick = "connect(this,"+ nodeid +")";
-	            lastmsg = "Node Timeout";
 	            break;
 	        default:
 	            return;
@@ -95,6 +73,7 @@ function btn_conf(nodeid)
 	    if(node.authtype=="key")
         {
             chooseauthtype(true);
+			$('#keyfileselect').val(node.key);
             btnauth='<button class="help" onclick="chooseauthtype(false)"><span class="fa fa-file"></span></button>';
         }else
         {
@@ -106,6 +85,19 @@ function btn_conf(nodeid)
 
     });
 }
+
+function fillin_keyoption()
+{
+	$.get('/key/get',function(m){
+		keys = JSON.parse(m);
+		for(var i=0; i<keys.length;i++)
+		{
+        	$('#keyfileselect').append('<option value="'+ keys[i].key + '">'+ keys[i].key +'</option>');
+        	$('#modal_addnode_key').append('<option value="'+ keys[i].key + '">'+ keys[i].key +'</option>');
+		}
+	});
+}
+
 
 function chooseauthtype(tf)
 {
@@ -225,9 +217,21 @@ function update_chart(msgs)
 	}
 }
 
+function get_selected_ids()
+{
+	var checkboxes = $('input:checked');
+	var res=[]
+	for (var i=0;i<checkboxes.length;i++)
+	{
+		var node_id = $(checkboxes[i]).parent().parent().parent().attr('id');
+		res.push(parseInt(node_id.substring(5)));
+	}
+	return res;
+}
+
 function connect_selected()
 {
-	var selected = NSL(nodes_id ,$('#nsl').val());
+	var selected = get_selected_ids();
 	for (var j in selected)
 	{
 		$.get('/node/connect/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
@@ -236,7 +240,7 @@ function connect_selected()
 
 function disconnect_selected()
 {
-	var selected = NSL(nodes_id ,$('#nsl').val());
+	var selected =  get_selected_ids();
 	for (var j in selected)
 	{
 		$.get('/node/disconnect/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
@@ -246,7 +250,7 @@ function disconnect_selected()
 
 function delete_selected()
 {
-	var selected = NSL(nodes_id ,$('#nsl').val());
+	var selected =  get_selected_ids();
 	for (var j in selected)
 	{
 		$.get('/node/delete/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
@@ -257,12 +261,19 @@ function delete_selected()
 $('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();
 function add_node()
 {
-	if( $('#keyfileselect').val())
+	if( $('#modal_addnode_key').val())
 	{
-		var key = $('#keyfileselect').val();
+		var key = $('#modal_addnode_key').val();
 	}else {
 		var key = "";
 	}
+	if( $('#modal_addnode_password').val())
+	{
+		var password = $('#modal_addnode_password').val();
+	}else {
+		var password = "";
+	}
+
 	if($('#btn_passwd').is(':visible'))
 		var authtype = 'password';
 	else
@@ -272,13 +283,13 @@ function add_node()
 			"address": $('#modal_addnode_address').val(),
 			"port": $('#modal_addnode_port').val(),
 			"username": $('#modal_addnode_username').val(), 
-   			"password": $('#modal_addnode_key').val(), 
+   			"password": password , 
 			"authtype": authtype ,
 			"key": key
 		}};
 
 	reload_chart();
-	$.post('/node/add', JSON.stringify(postdata),function(m){console.log(m); addlog(m.msg);},'json');
+	$.post('/node/add', JSON.stringify(postdata),function(m){addlog(m.msg);},'json');
 }
 
 function reload_chart()
@@ -287,14 +298,14 @@ function reload_chart()
 }
 
 
-function delete_node(btn)
+function delete_node()
 {
 	var nodeid = $('#modal_nodeid').text();
 	$.get('/node/delete/'+nodeid,function(m){addlog(JSON.parse(m).msg);});
 	$('#node_'+nodeid).remove();
 }
 
-function update_node(btn)
+function update_node()
 {
 	var nodeid = $('#modal_nodeid').text();
 	if( $('#keyfileselect').val())
@@ -314,7 +325,7 @@ function update_node(btn)
 		}};
 
 	$('#node_'+nodeid).children().children()[3].innerText = $('#modal_address').val();
-	$.post('/node/update/'+nodeid, JSON.stringify(postdata),function(m){console.log(m); addlog(m.msg);},'json');
+	$.post('/node/update/'+nodeid, JSON.stringify(postdata),function(m){addlog(m.msg);},'json');
 }
 
 
@@ -350,6 +361,8 @@ $('#btn_sync').click(function(event) {
 
 
 $.get("/node/get/all?detail",init_chart);
+fillin_keyoption();
+
 
 setInterval(function(){ 
 	if(sync_on == false) return;

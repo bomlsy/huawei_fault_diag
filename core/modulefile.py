@@ -34,7 +34,7 @@ class ModuleFile:
             with open(mod,'w') as modf:
                 modf.write(modulecontent)
             with open(desc, 'w') as descf:
-                json.dump({'name':modulefilename,'description':description_text,'argument':default_argument},descf,indent=2)
+                json.dump({'module':modulefilename,'description':description_text,'argument':default_argument},descf,indent=2)
             return json.dumps({'status':1,'msg':"Module %s Added." % modulefilename})
 
     def delete(self, modulefilename):

@@ -16,7 +16,7 @@ class KeyFile:
         res = []
         for key in os.listdir(self.keypath):
             with open(os.path.join(self.keypath,key)) as kf:
-                res.append({'name':key ,'content': kf.read()})
+                res.append({'key':key ,'content': kf.read()})
         return json.dumps(res)
 
     def add(self, keyfilename, keycontent):

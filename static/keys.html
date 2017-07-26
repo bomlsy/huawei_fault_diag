@@ -8,6 +8,7 @@
     <link href='assets/css/font-awesome.min.css' rel='stylesheet' />
 
     <link href="assets/css/custom-style.css" rel="stylesheet" />
+    <link href="assets/css/keys.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -29,7 +30,6 @@
         <a href="task.html" class="list-group-item"><i class="fa fa-tasks"></i> Task</a>
         <a href="#menu3" class="list-group-item" data-toggle="collapse" data-parent="#sidebar" aria-expanded="true"><i class="fa fa-cogs"></i> Configure</a>
         <div class="collapse show" id="menu3">
-            <a href="access.html" class="list-group-item"><i class="fa fa-cog"></i> Access</a>
             <a href="modules.html" class="list-group-item"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item active"><i class="fa fa-key"></i> Keys</a>
         </div>
@@ -41,21 +41,55 @@
     <h1 class="page-header">
         Keys <small>密钥配置</small>
     </h1>
-    <div class="row">
-        <div class="col-md-4">
 
+    <div class="row" id="row_1">
+        <button onclick="resetbutton()" class="flat-button" data-toggle="modal" data-target="#modal_addkey"><span class="fa fa-plus"></span> Add</button>
+        <button class="flat-button yellow" onclick="load_keys()"><span class="fa fa-refresh"></span> Reload</button>
+    </div>
+
+    <div class="row" id="row_2">
+        <div class="col-md-8">
+            <div class="panel-group cgroup" id="key_list">
+            </div>
         </div>
-
         <div class="col-md-4">
-
+            <textarea readonly class="log" id="logarea"></textarea>
         </div>
+    </div>
 
-        <div class="col-md-4">
+</div>
 
+<div class="modal fade" id="modal_addkey" tabindex="-1" role="dialog" aria-labelledby="modal_addkey_title" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal_addkey_title">Add Key</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body" id="modal_addkey_body">
+                <div class="row">
+                    <label for="modal_addkey_name" class="col-sm-3 control-label">Key Name</label>
+                    <div class="col-sm-6"><input id="modal_addkey_name" class="flat" style="margin-left: 0; width: 100%;" placeholder="Empty for Filename" /></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="btn_addkey_method" class="col-sm-3 control-label">File</label>
+                    <div id="btn_addkey_method"  class="col-sm-6" style="display: block;">
+                        <button class="help" style="margin-left: 0" id="btn_key" onclick="$('#btn_text').show();$('#btn_key').hide(); $('#modal_addkey_text').show();$('#modal_addkey_file').hide();"><span class="fa fa-file"></span></button>
+                        <button class="help" style="margin-left: 0" id="btn_text" onclick="$('#btn_text').hide();$('#btn_key').show(); $('#modal_addkey_file').show();$('#modal_addkey_text').hide();"><span class="fa fa-keyboard-o"></span></button>
+                        <div class="uploadarea" id="modal_addkey_file">Drag File Here</div>
+                        <textarea id="modal_addkey_text" style="height: 200px; width: 100%; resize: none; font-size: xx-small;" placeholder="KeyFile Content"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_key()">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
-
     </div>
 </div>
+
 
 <script src="assets/js/jquery-3.2.1.js"></script>
 <script src="assets/js/tether.min.js"></script>
@@ -63,6 +97,7 @@
 
 
 <script src="app/common.js"></script>
+<script src="app/key.js"></script>
 
 
 </body>

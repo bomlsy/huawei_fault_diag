@@ -213,7 +213,7 @@ Page Header
 */
 
 .header {
-    margin: 0 30px;
+  margin: 0 30px;
 }
 .page-header {
   margin: 0;
@@ -224,9 +224,9 @@ Page Header
   color: #323232;
 }
 .page-header small {
-display: inline;
-padding-top: 14px;
-font-size: 19px;
+  display: inline;
+  padding-top: 14px;
+  font-size: 19px;
 }
 h1.page-header small {
     color: #7E7E7E;
@@ -296,7 +296,6 @@ h1.page-header small {
 
 
 ul{
-  font: 15px 'trebuchet MS', 'lucida sans';
   padding: 0;
   width: 100%;
   text-shadow: 0 1px 0 rgba(255,255,255,.5);
@@ -310,8 +309,7 @@ ul li{
 
 .flat-button {
 
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-right: 20px;
 
   height: 40px;
   width: 90px;
@@ -339,6 +337,13 @@ ul li{
   width: 120px;
   font-size: 16px;
 }
+
+.flat-button.small{
+  height: 25px;
+  width: 70px;
+  font-size: 14px;
+}
+
 
 .flat-button.red{
   border-color: #FF6384;
@@ -440,10 +445,12 @@ ul li{
 Input
 */
 
+input{
+  text-indent: 5px;
+}
 
 input.flat {
-  margin-left: 10px;
-  margin-right: 10px;
+  margin-right: 20px;
   height: 40px;
   width: 120px;
   font-size: 16px;
@@ -465,4 +472,137 @@ input.flat:hover {
   -o-transition: box-shadow 0.4s; /* Opera */
 }
 
+input[type='checkbox']{
+  height: 20px;
+  width: 20px;
+}
 
+.log
+{
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  resize: none;
+}
+
+
+.log:hover {
+  box-shadow: 0 0 20px #00AAFF;
+  transition: box-shadow 0.6s;
+  -moz-transition: box-shadow 0.6s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.6s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.6s; /* Opera */
+}
+
+
+.help {
+  margin-right: 20px;
+
+  height: 40px;
+  width: 40px;
+  
+  vertical-align: bottom;
+
+  background-color: white;
+  color: #00AAFF;
+  font-size: 16px;
+  text-align: center;
+
+  border-width: 1px;
+  border-style: solid;
+  border-color: #00AAFF;
+  border-radius: 2px; 
+}
+
+.help:hover{
+  box-shadow: 0 0 15px #00AAFF;
+  transition: box-shadow 0.5s;
+  -moz-transition: box-shadow 0.5s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.5s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.5s; /* Opera */
+}
+
+.help.yellow{
+  color: #FFCE56;
+  border-color: #FFCE56;
+}
+
+.help.yellow:hover{
+  box-shadow: 0 0 15px #FFCE56;
+}
+
+.help.red{
+  color: #FF6384;
+  border-color: #FF6384;
+}
+
+.help.red:hover{
+  box-shadow: 0 0 15px #FF6384;
+}
+
+
+.uploadarea {
+  margin-top: 10px;
+  width:100%;
+  height:50px; 
+  border:3px dashed #00AAFF; 
+  line-height:40px; 
+  text-align:center; 
+  font-size:24px; 
+  color:#00AAFF
+}
+
+
+.uploadarea:hover{
+    box-shadow: 0px 0px 15px #00AAFF;
+  transition: box-shadow 0.4s;
+  -moz-transition: box-shadow 0.4s; /* Firefox 4 */
+  -webkit-transition: box-shadow 0.4s; /* Safari 和 Chrome */
+  -o-transition: box-shadow 0.4s; /* Opera */
+}
+
+.cgroup {
+  overflow: auto;
+  margin-bottom: 0;
+  padding: 0;
+  width: 100%;
+  text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+
+.cgroupi{
+  background-color: #ddd;
+  height: 100%;
+  font-size: large;
+  position: relative;
+  display: block;
+  background: #ddd;
+  color: #444;
+  -webkit-transition: all .3s ease-out;
+  -moz-transition: all .3s ease-out;
+  -ms-transition: all .3s ease-out;
+  -o-transition: all .3s ease-out;
+  transition: all .3s ease-out;
+}
+
+.panel-default{
+    padding: 0 0 10px 15px;
+}
+
+.cgroupi:hover{
+  background: #00AAFF;
+}
+
+.panel-title:hover{
+  cursor: pointer;
+}
+
+.panel-body{
+  margin-left: 10px;
+  font-size: small;
+}
+
+pre
+{
+  width: 100%;
+  max-height: 200px;
+}

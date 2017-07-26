@@ -30,7 +30,6 @@
         <a href="task.html" class="list-group-item"><i class="fa fa-tasks"></i> Task</a>
         <a href="#menu3" class="list-group-item collapsed" data-toggle="collapse" data-parent="#sidebar" aria-expanded="false"><i class="fa fa-cogs"></i> Configure</a>
         <div class="collapse" id="menu3">
-            <a href="access.html" class="list-group-item"><i class="fa fa-cog"></i> Access</a>
             <a href="modules.html" class="list-group-item"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item"><i class="fa fa-key"></i> Keys</a>
         </div>
@@ -53,7 +52,7 @@
         </div>
         <div class="col-md-3">
             <button class="flat-button" data-toggle="modal" data-target="#modal_addnode"><span class="fa fa-plus"></span> Add</button>
-            <button class="flat-button yellow"><span class="fa fa-refresh"></span> Reload</button>
+            <button class="flat-button yellow" onclick="reload_chart()"><span class="fa fa-refresh"></span> Reload</button>
         </div>
     </div>
 
@@ -121,38 +120,38 @@
             </div>
             <div class="modal-body" id="modal_detail_body">
                 <div class="row">
-                    <label for="modal_nodeid" class="col-sm-3 control-label">Node ID</label>
-                    <p id="modal_nodeid"  class="col-sm-9" ></p>
+                    <label for="modal_nodeid" class="col-md-4 control-label">Node ID</label>
+                    <p id="modal_nodeid"  class="col-md-8" ></p>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_hostname" class="col-sm-3 control-label">Hostname</label>
-                    <p id="modal_hostname"  class="col-sm-9" ></p>
+                    <label for="modal_hostname" class="col-md-4 control-label">Hostname</label>
+                    <p id="modal_hostname"  class="col-md-8" ></p>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_status" class="col-sm-3 control-label">Status</label>
-                    <p id="modal_status"  class="col-sm-9" ></p>
+                    <label for="modal_status" class="col-md-4 control-label">Status</label>
+                    <p id="modal_status"  class="col-md-8" ></p>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_username" class="col-sm-3 control-label">Username</label>
-                    <div class="col-sm-6"><input id="modal_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_username" class="col-md-4 control-label">Username</label>
+                    <div class="col-md-6"><input id="modal_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_address" class="col-sm-3 control-label">Address</label>
-                    <div class="col-sm-6"><input id="modal_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_address" class="col-md-4 control-label">Address</label>
+                    <div class="col-md-6"><input id="modal_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_port" class="col-sm-3 control-label">Port</label>
-                    <div class="col-sm-6"><input id="modal_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_port" class="col-md-4 control-label">Port</label>
+                    <div class="col-md-6"><input id="modal_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="btn_authtype" class="col-sm-3 control-label">Authentication</label>
-                    <div id="btn_authtype"  class="col-sm-2" ></div>
+                    <label for="btn_authtype" class="col-md-4 control-label">Authentication</label>
+                    <div id="btn_authtype"  class="col-md-2" ></div>
                     <div class="col-md-4">
                     <input id="passwordtext" class="flat" style="margin-left: 0; width: 100%;"  placeholder="Password" value=""/>
                     <select class="form-control" id="keyfileselect"></select>
@@ -160,8 +159,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="delete_node(this)">Delete</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="update_node(this)">Save</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" onclick="delete_node()">Delete</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="update_node()">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
@@ -179,37 +178,34 @@
             </div>
             <div class="modal-body" id="modal_addnode_body">
                 <div class="row">
-                    <label for="modal_addnode_username" class="col-sm-3 control-label">Username</label>
-                    <div class="col-sm-6"><input id="modal_addnode_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_addnode_username" class="col-md-4 control-label">Username</label>
+                    <div class="col-md-6"><input id="modal_addnode_username" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_addnode_address" class="col-sm-3 control-label">Address</label>
-                    <div class="col-sm-6"><input id="modal_addnode_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_addnode_address" class="col-md-4 control-label">Address</label>
+                    <div class="col-md-6"><input id="modal_addnode_address" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="modal_addnode_port" class="col-sm-3 control-label">Port</label>
-                    <div class="col-sm-6"><input id="modal_addnode_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
+                    <label for="modal_addnode_port" class="col-md-4 control-label">Port</label>
+                    <div class="col-md-6"><input id="modal_addnode_port" class="flat" style="margin-left: 0; width: 100%;"/></div>
                 </div>
                 <br>
                 <div class="row">
-                    <label for="btn_addnode_authtype" class="col-sm-3 control-label">Authentication</label>
-                    <div id="btn_addnode_authtype"  class="col-sm-2" >
-
+                    <label for="btn_addnode_authtype" class="col-md-4 control-label">Authentication</label>
+                    <div id="btn_addnode_authtype"  class="col-md-2" >
                         <button class="help" id="btn_passwd" onclick="$('#btn_passwd').hide();$('#btn_key').show(); $('#modal_addnode_key').show();$('#modal_addnode_password').hide();"><span class="fa fa-font"></span></button>
                         <button class="help" id="btn_key" onclick="$('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();"><span class="fa fa-file"></span></button>
-
                     </div>
                     <div class="col-md-4">
-                    <div id="">
                         <input id="modal_addnode_password" class="flat" style="margin-left: 0; width: 100%;"  placeholder="Password" value=""/>
                         <select class="form-control" id="modal_addnode_key"></select>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_node(this)">Add</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick=add_node()>Add</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>

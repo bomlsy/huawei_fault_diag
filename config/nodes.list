@@ -8,14 +8,8 @@
     "username": "dking", 
     "authtype": "key", 
     "key": "id_rsa", 
-    "address": "127.0.0.1"
-  }, 
-  {
-    "username": "dking", 
-    "authtype": "password", 
-    "key": "", 
-    "address": "127.0.0.3", 
-    "password": null, 
+    "address": "127.0.0.1", 
+    "password": "qazwsxedc", 
     "port": "22"
   }
 ]

@@ -67,9 +67,10 @@ class Node:
                 # push notification
                 self.msg.put('update',self.getBasicStatus())
 
-        except AuthenticationException:
+        except IOError or AuthenticationException:
             self.status = -2
-        except:
+        except Exception,e:
+            print e
             self.status = -3
 
     def disconnect(self):
@@ -99,6 +100,8 @@ class Node:
         state['authtype'] = self.config['authtype']
         state['address'] = self.config['address']
         state['port'] = self.config['port']
+        if state['authtype']  == 'key':
+           state['key'] = self.config['key']
         return state
 
     def daemon(self):
@@ -132,7 +135,7 @@ class Node:
             modsave = 'cat > "log_analyser/' + modulename + '" << MOD_EOF\n' + modcontent + '\nMOD_EOF\n'
             self.client.exec_command(modsave)
             self.client.exec_command('chmod +x log_analyser/' + modulename.replace(' ','\\ ')  )
-            stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./' + modulename.replace(' ','\\ ') + ' ' + param )
+            stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./"' + modulename+ '" ' + param )
             res=''
             for line in stdout:
                 res+=line
@@ -173,6 +176,7 @@ class Nodes:
             node.loadConfig(full_ac)
             node.connect()
             self.nodes.append(node)
+            node.connect()
             return full_ac['id']
         else:
             return -1
@@ -180,6 +184,7 @@ class Nodes:
     def delNode(self,nodeid):
         node = self.getNode(nodeid)
         if node:
+            node.disconnect()
             self.nodes.remove(node)
             return self.access.delAccess(nodeid)
         else:
@@ -195,6 +200,7 @@ class Nodes:
                 if node['id'] == nodeid:
                     node.disconnect()
                     node.loadConfig(full_ac)
+                    node.connect()
                     return True
         return False
 
@@ -315,7 +321,7 @@ class Nodes:
         if node and node['status'] == 1:
             def task():
                 res = node.execute_mod(mod, param)
-                self.msg.put('mod', {'command': mod, 'result': res, 'nodeid': nodeid})
+                self.msg.put('mod', {'module': mod, 'result': res, 'nodeid': nodeid})
             th = threading.Thread(target = task)
             th.daemon=True
             th.start()
@@ -328,7 +334,7 @@ class Nodes:
             if node['status'] == 1:
                 def task():
                     res = node.execute_mod(mod, param)
-                    self.msg.put('mod', {'command': mod, 'result': res, 'nodeid': node['id']})
+                    self.msg.put('mod', {'module': mod, 'result': res, 'nodeid': node['id']})
                 th = threading.Thread(target = task)
                 th.daemon = True
                 th.start()

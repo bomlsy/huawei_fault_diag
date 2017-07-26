@@ -1,4 +1,4 @@
-## 银杏黄项目：对象服务结点故障快速定位
+# 银杏黄项目：对象服务结点故障快速定位
 
 本工具提供了一个结点管理平台，在平台中，管理员可以批量分发命令与脚本至指定结点执行，并在本地接收对应结果。
 
@@ -6,20 +6,20 @@
 
 ## 开发
 
-本工具为全新自主开发，前端框架/前端测试浏览器/Python模块 均使用了现有最新版本。
+本工具为全新自主开发，前端框架/前端测试浏览器/Python模块 均使用了现有最新版本。js特性/视觉样式测试在Chrome(59.0.3071.115) 1920x1080 上表现正常。
 
-后台源码结构简单，可二次开发。前端页面隔离，可分别再定制。
+前后端分离。后台源码结构简单，可二次开发。前端页面隔离，可分别再定制。
 
-前端使用了HTML5和CSS3新特性，使用了 bootstrap 4.0.0 + fontawesome 4.7.0 + jquery 3.2.1 + chart.js2.6.0 。js特性/视觉样式测试在Chrome(59.0.3071.115)上表现正常。
+前端使用了HTML5和CSS3新特性，使用了 bootstrap 4.0.0 + fontawesome 4.7.0 + jquery 3.2.1 + chart.js2.6.0, 实现了响应式布局与交互效果。
 
-后端使用了 python2.7 (web.py + paramiko)
+后端使用了 python2.7 (web.py 0.38 + paramiko 2.2.1)
 
-本平台实现了跨系统平台运行。目前在Linux/Windows下已测试运行正常。MacOS暂未测试。
+本平台实现了跨系统平台运行。目前在Linux/Windows下已测试运行正常。MacOS等待最后测试。
 
 ## 安装
 * Linux
 
-        本工具推荐使用Linux作为运行平台。推荐额外使用virtualenv隔离python环境。
+        本工具推荐使用Linux作为运行平台。另外推荐使用virtualenv隔离python环境。
         pip install pip --upgrade
         pip install -r requirements.txt
 
@@ -32,10 +32,10 @@
 
 
 ## Doc for Devs
-Python:
+后台:
 * Web.py作为Web容器
 * paramiko提供ssh交互
-* /\__main\__.py 定义了WebAPI的路由信息与对应类名。主要通过控制Nodes对象实例来操纵SSH行为。
+* /\_\_main\_\_.py 定义了WebAPI的路由信息与对应类名。主要通过控制Nodes对象实例来操纵SSH行为。
 * /core/access.py Access类主要用于将连接信息配置文件解析为标准的连接信息配置对象。也提供Access配置文件的管理功能。
 * /core/nodes.py Node载入Access对象，实现单独的SSH交互。Nodes为Node对象集的控制器。
 * /core/config.py 加载全局配置文件/config/global.ini以初始化后台。
@@ -51,3 +51,8 @@ Python:
 * /static/assets 包含前端中与工具本身无关的文件(如视觉效果用的css/js)
 * /static/app 包含与本工具相关的js脚本
 * /cache 后台缓存，自动生成。如full_nodes.list用于省略多次解析nodes.list(判断最后修改时间)。
+
+前端：
+状态更新的Notification在Dashboard/Nodes/Task被定时每3s从后台取出，由界面右上角的Sync按钮控制。
+NSL(Nodes Selecting Language)是一个简单的结点选择语言，解析器在/static/app/common.js中实现。
+其他具体情况请阅读/static/*.html源码

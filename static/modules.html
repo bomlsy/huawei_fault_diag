@@ -8,6 +8,7 @@
     <link href='assets/css/font-awesome.min.css' rel='stylesheet' />
 
     <link href="assets/css/custom-style.css" rel="stylesheet" />
+    <link href="assets/css/module.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -29,7 +30,6 @@
         <a href="task.html" class="list-group-item"><i class="fa fa-tasks"></i> Task</a>
         <a href="#menu3" class="list-group-item" data-toggle="collapse" data-parent="#sidebar" aria-expanded="true"><i class="fa fa-cogs"></i> Configure</a>
         <div class="collapse show" id="menu3">
-            <a href="access.html" class="list-group-item"><i class="fa fa-cog"></i> Access</a>
             <a href="modules.html" class="list-group-item active"><i class="fa fa-microchip"></i> Modules</a>
             <a href="keys.html" class="list-group-item"><i class="fa fa-key"></i> Keys</a>
         </div>
@@ -41,23 +41,89 @@
     <h1 class="page-header">
         Modules <small>模块配置</small>
     </h1>
-    <div class="row">
-        <div class="col-md-4">
 
+    <div class="row" id="row_1">
+        <button class="help yellow" data-toggle="modal" data-target="#helpmodal"><span class="fa fa-question fa-2x"></span></button>
+        <button onclick="resetbutton()" class="flat-button" data-toggle="modal" data-target="#modal_addmod"><span class="fa fa-plus"></span> Add</button>
+        <button class="flat-button yellow" onclick="load_mods()"><span class="fa fa-refresh"></span> Reload</button>
+    </div>
+
+    <div class="row" id="row_2">
+        <div class="col-md-8">
+            <div class="panel-group cgroup" id="mod_list">
+            </div>
         </div>
-
         <div class="col-md-4">
-
+            <textarea readonly class="log" id="logarea"></textarea>
         </div>
+    </div>
 
-        <div class="col-md-4">
+</div>
 
+<div class="modal fade" id="modal_addmod" tabindex="-1" role="dialog" aria-labelledby="modal_addmod_title" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="modal_addnode_title">Add Module</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body" id="modal_addmod_body">
+                <div class="row">
+                    <label for="modal_addmod_name" class="col-sm-3 control-label">Module Name</label>
+                    <div class="col-sm-6"><input id="modal_addmod_name" class="flat" style="margin-left: 0; width: 100%;" placeholder="Empty for Filename" /></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_addmod_arg" class="col-sm-3 control-label">Default Argument</label>
+                    <div class="col-sm-6"><input id="modal_addmod_arg" class="flat" style="margin-left: 0; width: 100%;" /></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="modal_addmod_desc" class="col-sm-3 control-label">Description</label>
+                    <div class="col-sm-6"><textarea id="modal_addmod_desc"  class="log"  style="border-color:#00AAFF; height: 100px; width: 100%;"></textarea></div>
+                </div>
+                <br>
+                <div class="row">
+                    <label for="btn_addmod_method" class="col-sm-3 control-label">File</label>
+                    <div id="btn_addmod_method"  class="col-sm-6" style="display: block;">
+                        <button class="help" style="margin-left: 0" id="btn_file" onclick="$('#btn_text').show();$('#btn_file').hide(); $('#modal_addmod_text').show();$('#modal_addmod_file').hide();"><span class="fa fa-file"></span></button>
+                        <button class="help" style="margin-left: 0" id="btn_text" onclick="$('#btn_text').hide();$('#btn_file').show(); $('#modal_addmod_file').show();$('#modal_addmod_text').hide();"><span class="fa fa-keyboard-o"></span></button>
+                        <div class="uploadarea" id="modal_addmod_file">Drag File Here</div>
+                        <textarea id="modal_addmod_text" style="height: 200px; width: 100%; resize: none; font-size: xx-small;" placeholder="KeyFile Content"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="add_mod()">Add</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
         </div>
-
     </div>
 </div>
 
 
+
+<div class="modal fade" id="helpmodal" tabindex="-2" role="dialog" aria-labelledby="helplabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="helplabel">Module</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span>
+            </div>
+            <div class="modal-body">
+                <h4>添加自定义模块来解决问题！</h4><br><br>
+                <b>自定义模块</b>：模块将被推送至各个结点执行，抓取stdout+stderr输出结果。<br><br>
+                <b>外部参数</b>：每次运行时，模块均可接收指定外部参数。更加简洁化动态化！<br><br>
+                <b>模块语言</b>：可以使用对象结点上所支持的任何语言！<br>(如以#!/usr/bin/env python 开头指定脚本类型。<br> 远端以./"scriptname.xx"的方式执行。)<br><br>
+                <b>自定义反馈颜色</b>：任意位置额外输出一行<code><br>NOTIFICATION_COLOR=RED<br>NOTIFICATION_COLOR=BLUE<br>NOTIFICATION_COLOR=GREEN<br></code>以指定Web端结果条目颜色。关键信息更加醒目！<br><br>
+                <b>主动展示</b>：指定了特殊颜色的结果条目将被主动展开
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="flat-button" data-dismiss="modal">关闭</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
 
 <script src="assets/js/jquery-3.2.1.js"></script>
 <script src="assets/js/tether.min.js"></script>
@@ -65,6 +131,7 @@
 
 
 <script src="app/common.js"></script>
+<script src="app/module.js"></script>
 
 
 </body>
