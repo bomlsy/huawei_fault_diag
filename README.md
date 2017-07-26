@@ -53,6 +53,6 @@
 * /cache 后台缓存，自动生成。如full_nodes.list用于省略多次解析nodes.list(判断最后修改时间)。
 
 前端：
-状态更新的Notification在Dashboard/Nodes/Task被定时每3s从后台取出，由界面右上角的Sync按钮控制。
-NSL(Nodes Selecting Language)是一个简单的结点选择语言，解析器在/static/app/common.js中实现。
-其他具体情况请阅读/static/*.html源码
+* 状态更新的Notification在Dashboard/Nodes/Task被定时每3s从后台取出，由界面右上角的Sync按钮控制。
+* NSL(Nodes Selecting Language)是一个简单的结点选择语言，解析器在/static/app/common.js中实现。
+* 其他具体情况请阅读/static/*.html源码
