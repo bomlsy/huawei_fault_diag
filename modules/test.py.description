@@ -1,5 +1,5 @@
 {
-"module":"test.py","description":"description_text","argument":"qwer"
+"module":"test.py","description":"Some description text\nMultiline supported","argument":""
 }
 
 

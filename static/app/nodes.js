@@ -258,7 +258,7 @@ function delete_selected()
 }
 
 
-$('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();
+
 function add_node()
 {
 	if( $('#modal_addnode_key').val())
@@ -288,11 +288,10 @@ function add_node()
 			"key": key
 		}};
 
-	reload_chart();
-	$.post('/node/add', JSON.stringify(postdata),function(m){addlog(m.msg);},'json');
+	$.post('/node/add', JSON.stringify(postdata),function(m){addlog(m.msg); load_chart();},'json');
 }
 
-function reload_chart()
+function load_chart()
 {
 	$.get("/node/get/all?detail",init_chart);
 }
@@ -330,6 +329,7 @@ function update_node()
 
 
 
+$('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();
 
 $('#nsl').keyup(function(){
 	var selected = NSL(nodes_id ,$('#nsl').val());
@@ -360,7 +360,7 @@ $('#btn_sync').click(function(event) {
 });
 
 
-$.get("/node/get/all?detail",init_chart);
+load_chart();
 fillin_keyoption();
 
 

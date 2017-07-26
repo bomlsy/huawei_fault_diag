@@ -4,4 +4,6 @@
 
 import sys
 
-print 22334,sys.argv
+print 'NOTIFICATION_COLOR=GREEN'
+print 'This is an example'
+print 'Module Info:',sys.argv

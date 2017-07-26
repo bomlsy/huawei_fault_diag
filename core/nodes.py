@@ -67,11 +67,13 @@ class Node:
                 # push notification
                 self.msg.put('update',self.getBasicStatus())
 
-        except IOError or AuthenticationException:
+        except AuthenticationException:
             self.status = -2
-        except Exception,e:
-            print e
-            self.status = -3
+            self.msg.put('update', self.getBasicStatus())
+        except IOError:
+            self.status = -2
+            self.msg.put('update', self.getBasicStatus())
+
 
     def disconnect(self):
         if self.status == 1:
