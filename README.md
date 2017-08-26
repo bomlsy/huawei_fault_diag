@@ -28,7 +28,8 @@
         pip install -r requirements.txt
 
 * Windows
-        # 安装[VCForPython27](https://www.microsoft.com/en-us/download/confirmation.aspx?id=44266)以编译pycrypto包
+
+        # 安装 [VCForPython27](https://www.microsoft.com/en-us/download/confirmation.aspx?id=44266) 以编译pycrypto包
         pip install pip --upgrade
         pip install -r requirements.txt
 
