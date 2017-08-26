@@ -47,15 +47,15 @@ class Access:
             return
         if not access.has_key('hostname'):
             full_access['hostname'] = ''
-        if not access.has_key('port'):
+        if not access.has_key('port') or access['port'] == '':
             full_access['port'] = default_port
-        if not access.has_key('username'):
+        if not access.has_key('username') or access['username'] == '':
             full_access['username'] = default_username
-        if not access.has_key('password'):
+        if not access.has_key('password') or access['password'] == '':
             full_access['password'] = default_password
-        if not access.has_key('authtype'):
+        if not access.has_key('authtype') or access['authtype'] == '':
             full_access['authtype'] = default_authtype
-        if not access.has_key('key'):
+        if not access.has_key('key') or access['key'] == '':
             full_access['key'] = default_key
 
         if id_AI:

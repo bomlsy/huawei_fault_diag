@@ -14,20 +14,23 @@
 
 后端使用了 python2.7 (web.py 0.38 + paramiko 2.2.1)
 
-本平台实现了跨系统平台运行。目前在Linux/Windows下已测试运行正常。MacOS等待最后测试。
+本平台实现了跨系统平台运行。目前在Linux/Windows下已测试运行正常。Mac请参考Linux自行安装。
 
 ## 安装
 * Linux
 
-        本工具推荐使用Linux作为运行平台。另外推荐使用virtualenv隔离python环境。
+        本工具推荐使用Linux作为运行平台。另外推荐使用virtualenv隔离python环境。 
+        # 编译cryptography包所需环境
+        apt-get install -y build-essential libssl-dev libffi-dev python-dev
+        # 更新pip至最新，以避免无法找到包的问题
         pip install pip --upgrade
+        # 编译安装所有依赖包
         pip install -r requirements.txt
 
 * Windows
-
-        Windows下安装Python模块时默认需要VS编译环境。可以在Pypi下载whl自行安装binary文件。
-        本工具在/windows目录下存档了Windows下可能出现编译错误的模块依赖包的二进制包，可直接安装这些包后再安装其他依赖包。
-        具体指导参考/windows/README_windows.txt
+        # 安装[VCForPython27](https://www.microsoft.com/en-us/download/confirmation.aspx?id=44266)以编译pycrypto包
+        pip install pip --upgrade
+        pip install -r requirements.txt
 
 
 
