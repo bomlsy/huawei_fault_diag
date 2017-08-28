@@ -110,7 +110,6 @@ function switch2(mode)
 
 function update_result(msgs)
 {
-	console.log(msgs);
 	var results = JSON.parse(msgs);
 
 	var html='';
