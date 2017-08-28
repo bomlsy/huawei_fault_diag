@@ -4,11 +4,10 @@
 
 通过自定义脚本，本方案可实现高度可定制化的结点日志分析功能。
 
+
 ## 开发
 
-本工具为全新自主开发，前端框架/前端测试浏览器/Python模块 均使用了现有最新版本。js特性/视觉样式测试在Chrome(59.0.3071.115) 1920x1080 上表现正常。
-
-前后端分离。后台源码结构简单，可二次开发。前端页面隔离，可分别再定制。
+本工具为全新自主开发，前端框架/前端测试浏览器/Python模块 均使用了现有最新版本。js特性/视觉样式测试在Chrome(59.0.3071.115) 1920x1080 上表现正常。前后端分离。后台源码结构简单，可二次开发。前端页面隔离，可分别再定制。
 
 前端使用了HTML5和CSS3新特性，使用了 bootstrap 4.0.0 + fontawesome 4.7.0 + jquery 3.2.1 + chart.js2.6.0, 实现了响应式布局与交互效果。
 
@@ -16,7 +15,9 @@
 
 本平台实现了跨系统平台运行。目前在Linux/Windows下已测试运行正常。Mac请参考Linux自行安装。
 
+
 ## 安装
+
 * Linux
 
         本工具推荐使用Linux作为运行平台。另外推荐使用virtualenv隔离python环境。 
@@ -27,16 +28,18 @@
         # 编译安装所有依赖包
         pip install -r requirements.txt
 
-* Windows
+* Windows  (需要[VCForPython27](https://www.microsoft.com/en-us/download/confirmation.aspx?id=44266))
 
-        # 安装 [VCForPython27](https://www.microsoft.com/en-us/download/confirmation.aspx?id=44266) 以编译pycrypto包
+        # 安装 VCForPython27 以编译pycrypto包
         pip install pip --upgrade
         pip install -r requirements.txt
 
 
 
 ## Doc for Devs
-后台:
+
+### 后台:
+
 * Web.py作为Web容器
 * paramiko提供ssh交互
 * /\_\_main\_\_.py 定义了WebAPI的路由信息与对应类名。主要通过控制Nodes对象实例来操纵SSH行为。
@@ -54,9 +57,10 @@
 * /static  前端文件目录
 * /static/assets 包含前端中与工具本身无关的文件(如视觉效果用的css/js)
 * /static/app 包含与本工具相关的js脚本
-* /cache 后台缓存，自动生成。如full_nodes.list用于省略多次解析nodes.list(判断最后修改时间)。
+* /cache 后台缓存，自动生成，可删除。如full_nodes.list用于省略重复解析nodes.list(判断最后修改时间)。
 
-前端：
+### 前端：
+
 * 状态更新的Notification在Dashboard/Nodes/Task被定时每3s从后台取出，由界面右上角的Sync按钮控制。
 * NSL(Nodes Selecting Language)是一个简单的结点选择语言，解析器在/static/app/common.js中实现。
-* 其他具体情况请阅读/static/*.html源码
+* 其他具体情况请浏览static/下源码
