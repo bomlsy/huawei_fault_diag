@@ -181,7 +181,7 @@ function runTask()
 		update_fetcher = setInterval(function(){ 
 			if(document.visibilityState == "hidden") return;
 			$.get(update_url , update_result);
-			if(task_nodelist.size == 0)taskbtn_off();
+			if(task_nodelist.size == 0){taskbtn_off(); running = false;}
 		},3000);
 
 		if(taskmod == "mod") 
