@@ -30,7 +30,7 @@ function init_chart(msgs)
 					<div class="panel-heading cgroupi"  data-toggle="collapse" data-parent="#accordion" href="#'+randid+'" class="collapsed" aria-expanded="false">\
                         <span class="panel-title"> ' + keyname + ' </span>\
 						<div class="float-md-right"><button class="flat-button small red" onclick=delete_key(\''+ keyname +'\')><span class="fa fa-close"></span> Del</button></div>\
-                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body info-area"><pre>'  + keycontent +'</pre></div></div></div>';
+                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body code-area"><pre>'  + keycontent +'</pre></div></div></div>';
 
 	}
 	$('#key_list').html(html);
