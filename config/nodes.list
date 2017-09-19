@@ -1,1 +1,34 @@
-[]
+[
+  {
+    "username": "", 
+    "authtype": "password", 
+    "key": "", 
+    "address": "120.78.84.189", 
+    "password": "AK47passwd", 
+    "port": ""
+  }, 
+  {
+    "username": "", 
+    "authtype": "key", 
+    "key": "id_rsa", 
+    "address": "120.78.84.189", 
+    "password": "", 
+    "port": ""
+  }, 
+  {
+    "username": "", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "120.78.84.189", 
+    "password": "AK47passwd", 
+    "port": ""
+  }, 
+  {
+    "username": "", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "120.78.84.189", 
+    "password": "AK47passwd", 
+    "port": ""
+  }
+]

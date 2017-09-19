@@ -21,6 +21,7 @@ body{
 .row{
   margin-left: 0px;
   margin-right: 0px;
+  line-height: 40px;
 }
 
 
@@ -204,8 +205,15 @@ Shine
     transition: skewX(-25deg);
 }
 
+/*
+Info Area
+*/
 
 
+.code-area , .info-area {
+	line-height: 20px;
+	padding-top: 5px;
+}
 
 
 /*
@@ -218,7 +226,7 @@ Page Header
 .page-header {
   margin: 0;
   height: 15%;
-  border-bottom: 1px solid transparent;
+  border-bottom: 1px solid transparent;	
   text-align: left;
   padding: 32px 22px 32px 15px;
   color: #323232;
@@ -312,9 +320,9 @@ ul li{
   margin-right: 20px;
 
   height: 40px;
-  width: 90px;
+  width: 100px;
   
-  vertical-align: bottom;
+  vertical-align: middle;
 
   background-color: white;
   color: #00AAFF;
@@ -339,9 +347,10 @@ ul li{
 }
 
 .flat-button.small{
-  height: 25px;
+  height: 30px;
   width: 70px;
   font-size: 14px;
+  line-height: 25px;
 }
 
 
@@ -585,7 +594,7 @@ input[type='checkbox']{
 }
 
 .panel-default{
-    padding: 0 0 10px 15px;
+    padding: 0 10px 10px 15px;
 }
 
 .cgroupi:hover{
@@ -597,8 +606,11 @@ input[type='checkbox']{
 }
 
 .panel-body{
-  margin-left: 10px;
   font-size: small;
+  	border-width: 3px;
+	border-style: solid;
+	border-color: #ddd;
+	border-radius: 2px; 
 }
 
 pre

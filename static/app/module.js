@@ -34,16 +34,16 @@ function init_chart(msgs)
 						<div class="float-md-right"><button class="flat-button small red" onclick=delete_mod(\''+ modname +'\')><span class="fa fa-close"></span> Del</button></div>\
                     </div>\
                     <div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false">\
-                    	<div class="panel-body">\
-                    		<p>Default Argument: ' + modarg +  '</p>\
-                    		<pre>'+moddesc+'</pre>\
+                    	<div class="panel-body info-area">\
+							<h6>Default Arguments: ' + modarg +  '</h6>\
+							<pre>'+moddesc+'</pre>\
 		                    <div class="panel panel-default">\
 								<div class="panel-heading cgroupi" data-toggle="collapse" data-parent="#accordion" href="#'+randid+'_1" class="collapsed" aria-expanded="false">\
 									<span class="panel-title">content</span>\
 			                    </div>\
 			                    <div id="'+randid+'_1" class="panel-collapse collapse" aria-expanded="false">\
-			                    	<div class="panel-body">\
-			                    		<pre>'  + modcontent +'</pre>\
+			                    	<div class="panel-body code-area">\
+										<pre>'  + modcontent +'</pre>\
 			                    	</div>\
 			                    </div>\
 			                </div>\
@@ -86,20 +86,21 @@ function add_mod()
 	"argument": $('#modal_addmod_arg').val(),
 	};
 
-	$.post('/module/add', JSON.stringify(postdata) ,function(m){addlog(JSON.parse(m).msg);});
-	load_mods();
+	$.post('/module/add', JSON.stringify(postdata) ,function(m){addlog(JSON.parse(m).msg);load_mods();});
+
 }
 
 function delete_mod(modname)
 {
-	$.get('/module/delete/'+modname,function(m){addlog(JSON.parse(m).msg);});
-	load_mods();
+	$.get('/module/delete/'+modname,function(m){addlog(JSON.parse(m).msg);load_mods();});
 }
 
 
 function load_mods(){
 	$.get('/module/get',function(m){init_chart(m);})
 }
+
+// Initialization Begin
 
 load_mods();
 

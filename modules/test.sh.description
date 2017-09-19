@@ -1,0 +1,5 @@
+{
+  "description": "example shell script", 
+  "module": "test.sh", 
+  "argument": "exp_arg1   exp_arg2"
+}

@@ -196,5 +196,5 @@ setInterval(function(){
 	if(document.visibilityState == "hidden") return;
 	if(donut_inited = false) return;
 	$.get("/notification/get/update",update_donut);
-},3000);
+},2000);
 

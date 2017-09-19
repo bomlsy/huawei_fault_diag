@@ -1,5 +1,5 @@
 {
-"module":"test.py","description":"Some description text\nMultiline supported","argument":""
+  "description": "example python script", 
+  "module": "test.py", 
+  "argument": "exp_arg1   exp_arg2"
 }
-
-

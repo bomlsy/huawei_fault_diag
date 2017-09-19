@@ -1,9 +1,6 @@
-#!/usr/bin/python
-
-# this module is made to be executed in node.
+#! /usr/bin/python2.7
 
 import sys
 
-print 'NOTIFICATION_COLOR=GREEN'
-print 'This is an example'
-print 'Module Info:',sys.argv
+print sys.argv
+print 'NOTIFICATION_COLOR=BLUE'

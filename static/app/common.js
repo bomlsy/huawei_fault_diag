@@ -34,7 +34,10 @@ window.onload = function()
 
 }
 
-
+function refresh_after(sec)
+{
+	setTimeout(function(){location.reload(true);},sec*1000);
+}
 
 function collapsible_sidebar()
 {

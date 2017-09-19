@@ -132,6 +132,7 @@ function update_result(msgs)
 		$('#task_result_node_'+nodeid).find('pre').text(resulttext);
 		$('#task_result_node_'+nodeid).css("background-color","#ddd");
 		$('#task_result_node_'+nodeid).css("width","100%");
+		$('#task_result_node_'+nodeid).css("line-height","normal");
 
 		$("#node_"+nodeid).show();
 		if(color!="#ddd") $('#node_'+nodeid).find('.col-md-11').click();
@@ -177,12 +178,6 @@ function runTask()
 		task_nodelist=new Set();
 		taskbtn_on();
 
-		update_fetcher = setInterval(function(){ 
-			if(document.visibilityState == "hidden") return;
-			$.get(update_url , update_result);
-			if(task_nodelist.size == 0){taskbtn_off(); running = false;}
-		},3000);
-
 		if(taskmod == "mod") 
 		{
 			var postcontent = $('#module_argument').val() ;
@@ -212,6 +207,14 @@ function runTask()
 				$.post(api_base_url+nodeid+modulename, postcontent);
 			}
 		}
+		
+		update_fetcher = setInterval(function(){ 
+			if(document.visibilityState == "hidden") return;
+			$.get(update_url , update_result);
+			if(task_nodelist.size == 0){taskbtn_off(); running = false;}
+		},2000);
+
+		
 	}else {
 		running = false;
 		delete task_nodelist;
@@ -220,6 +223,8 @@ function runTask()
 	}
 
 }
+
+// Initialization Begin
 
 fillin_modoption();
 switch2('mod');

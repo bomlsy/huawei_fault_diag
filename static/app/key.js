@@ -30,7 +30,7 @@ function init_chart(msgs)
 					<div class="panel-heading cgroupi"  data-toggle="collapse" data-parent="#accordion" href="#'+randid+'" class="collapsed" aria-expanded="false">\
                         <span class="panel-title"> ' + keyname + ' </span>\
 						<div class="float-md-right"><button class="flat-button small red" onclick=delete_key(\''+ keyname +'\')><span class="fa fa-close"></span> Del</button></div>\
-                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body"><pre>'  + keycontent +'</pre></div></div></div>';
+                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body info-area"><pre>'  + keycontent +'</pre></div></div></div>';
 
 	}
 	$('#key_list').html(html);
@@ -61,17 +61,18 @@ function add_key()
 
 	if(keyfilecontent == "") {addlog('Key file content is empty.');return;}
 
-	$.post('/key/add/' + savename, keyfilecontent ,function(m){addlog(JSON.parse(m).msg);});
+	$.post('/key/add/' + savename, keyfilecontent ,function(m){addlog(JSON.parse(m).msg);load_keys();});
+
 }
 
 function delete_key(keyname)
 {
-	$.get('/key/delete/'+keyname,function(m){addlog(JSON.parse(m).msg);});
-	load_keys();
+	$.get('/key/delete/'+keyname,function(m){addlog(JSON.parse(m).msg);load_mods();});
 }
 
 
-function load_keys(){
+function load_keys()
+{
 	$.get('/key/get',function(m){init_chart(m);})
 }
 

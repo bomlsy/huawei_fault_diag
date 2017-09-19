@@ -289,6 +289,7 @@ function add_node()
 		}};
 
 	$.post('/node/add', JSON.stringify(postdata),function(m){addlog(m.msg); load_chart();},'json');
+
 }
 
 function load_chart()
@@ -327,6 +328,8 @@ function update_node()
 	$.post('/node/update/'+nodeid, JSON.stringify(postdata),function(m){addlog(m.msg);},'json');
 }
 
+
+// Initialization Begin
 
 
 $('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show();$('#modal_addnode_key').hide();
@@ -369,5 +372,5 @@ setInterval(function(){
 	if(document.visibilityState == "hidden") return;
 	if(chart_inited == false) return;
 	$.get("/notification/get/update",update_chart);
-},3000);
+},2000);
 
