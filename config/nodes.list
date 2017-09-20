@@ -16,19 +16,59 @@
     "port": ""
   }, 
   {
-    "username": "", 
+    "username": "root", 
     "authtype": "password", 
     "key": "id_rsa", 
-    "address": "120.78.84.189", 
-    "password": "AK47passwd", 
-    "port": ""
+    "address": "127.0.0.1", 
+    "password": "qweqweqwe", 
+    "port": "22"
+  }, 
+  {
+    "username": "root", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "123.223.44.2", 
+    "password": "qweqwe", 
+    "port": "22"
   }, 
   {
     "username": "", 
     "authtype": "password", 
     "key": "id_rsa", 
-    "address": "120.78.84.189", 
-    "password": "AK47passwd", 
+    "address": "224.32.22.1", 
+    "password": "qweqwe", 
     "port": ""
+  }, 
+  {
+    "username": "WrongUsername", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "127.0.0.1", 
+    "password": "OrWrongPassword", 
+    "port": "22"
+  }, 
+  {
+    "username": "dking", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "127.0.0.1", 
+    "password": "qazwsxedc", 
+    "port": "22222222"
+  }, 
+  {
+    "username": "", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "inarray_delete", 
+    "password": "", 
+    "port": ""
+  }, 
+  {
+    "username": "root", 
+    "authtype": "password", 
+    "key": "id_rsa", 
+    "address": "last_node", 
+    "password": "", 
+    "port": "22"
   }
 ]

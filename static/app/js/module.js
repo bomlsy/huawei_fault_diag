@@ -14,7 +14,7 @@ function init_chart(msgs)
 
 	var html='';
 
-	for (var st in mod_all)
+	for (var st=0; st<mod_all.length; st++)
 	{
 
 		var modname = mod_all[st].module;
@@ -30,20 +30,20 @@ function init_chart(msgs)
 
 		html += '<div class="panel panel-default">\
 					<div class="panel-heading cgroupi" data-toggle="collapse" data-parent="#accordion" href="#'+randid+'" class="collapsed" aria-expanded="false">\
-                        <span class="panel-title"> ' + modname + ' </span>\
-						<div class="float-md-right"><button class="flat-button small red" onclick=delete_mod(\''+ modname +'\')><span class="fa fa-close"></span> Del</button></div>\
+                        <span class="panel-title"> ' + htmlspecialchars(modname) + ' </span>\
+						<div class="float-md-right"><button class="flat-button small red" onclick=delete_mod(\''+ htmlspecialchars(modname) +'\')><span class="fa fa-close"></span> Del</button></div>\
                     </div>\
                     <div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false">\
                     	<div class="panel-body info-area">\
-							<h6>Default Arguments: ' + modarg +  '</h6>\
-							<pre>'+moddesc+'</pre>\
+							<h6>Default Arguments: ' + htmlspecialchars(modarg) +  '</h6>\
+							<pre>'+htmlspecialchars(moddesc)+'</pre>\
 		                    <div class="panel panel-default">\
 								<div class="panel-heading cgroupi" data-toggle="collapse" data-parent="#accordion" href="#'+randid+'_1" class="collapsed" aria-expanded="false">\
 									<span class="panel-title">content</span>\
 			                    </div>\
 			                    <div id="'+randid+'_1" class="panel-collapse collapse" aria-expanded="false">\
 			                    	<div class="panel-body code-area">\
-										<pre>'  + modcontent +'</pre>\
+										<pre>'  + htmlspecialchars(modcontent) +'</pre>\
 			                    	</div>\
 			                    </div>\
 			                </div>\

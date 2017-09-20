@@ -25,11 +25,6 @@ class Access:
         self.accessfile = ""
         self.user_accessfile = ""
         self.full_accessfile = ""
-        self.daemon_run = True
-        th = threading.Thread(target = self.daemon)
-        th.daemon=True
-        th.start()
-
 
     def _load_single_access(self,access, id_AI=True):   # id_AutoIncreasement
         if isinstance(access,unicode) or isinstance(access,str):
@@ -109,6 +104,7 @@ class Access:
             self.accessfile = accessfile
             self.user_accessfile = os.path.join('config', self.accessfile)
             self.full_accessfile = os.path.join('cache', 'full_'+os.path.basename(self.user_accessfile))
+            self._iter_id = 0
             # error as no such config
             if not os.path.exists(self.user_accessfile):
                 return
@@ -121,9 +117,8 @@ class Access:
                     self.full_access_set = json.load(faf)
                     self.user_access_set = json.load(uaf)
                     for id_ac in self.full_access_set:
-                        if self._iter_id < id_ac['id']:
-                            self._iter_id = id_ac['id']
-                    self._iter_id +=1
+                        id_ac['id'] = self._iter_id
+                        self._iter_id += 1
                     uaf.close()
                     faf.close()
                     return
@@ -153,14 +148,3 @@ class Access:
             faf.close()
         except:
             pass
-
-    def daemon(self):
-        while self.daemon_run:
-            sleep(cache_daemon_interval)
-            global cache_ready2save
-            if cache_ready2save:
-                cache_ready2save = False
-                self.save_cache()
-
-    def stopdaemon(self):
-        self.daemon_run=False

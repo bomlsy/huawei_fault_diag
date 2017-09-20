@@ -197,8 +197,8 @@ nodes.connectAllNodes()
 # exit handler --
 def exit_handler(signum,sock):
     print "Ctrl-C (%d) Captured. Disconnecting..." % signum
-    nodes.access.stopdaemon()
     nodes.disconnectAllNodes()
+    nodes.stopDaemon()
     sleep(2)
     print "Server stopped."
     exit(0)

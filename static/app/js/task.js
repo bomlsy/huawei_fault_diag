@@ -1,5 +1,5 @@
-var nodes_id=[];
-var nodes_selected_id = [];
+var nodes_id=null;
+var nodes_selected_id = null;
 var taskmod = "";
 var running = false;
 var update_fetcher = null;
@@ -10,17 +10,16 @@ var mods_info = null;
 var task_nodelist=null;
 
 $('#nsl').keyup(function(){
+	nodes_selected_id = [];
 	nodes_selected_id = NSL(nodes_id ,$('#nsl').val());
-	for (var i in nodes_id)
-	{
-		$('#node_'+nodes_id[i]).find('input').removeAttr('checked');
-	}
+	nodes_id.forEach(function (item){
+		$('#node_'+item).find('input').get(0).checked=false;
+	});
 
-	for (var j in nodes_selected_id)
-	{
-		$('#node_'+nodes_selected_id[j]).find('input').attr('checked','');
-	}
-})
+	nodes_selected_id.forEach(function (item){
+		$('#node_'+item).find('input').get(0).checked=true;
+	});
+});
 
 function fillin_modoption()
 {
@@ -61,15 +60,18 @@ function generate_li(node)
 
 function init_node(msgs)
 {
+	nodes_id=new Set();
+	nodes_selected_id = new Set();
+
 	var status_all = JSON.parse(msgs);
 
 	var html='';
 
-	for (var st in status_all)
+	for (var st=0; st<status_all.length; st++)
 	{
 		if(status_all[st].status == 1)
 		{
-			nodes_id.push(status_all[st].id);
+			nodes_id.add(status_all[st].id);
 			html += '<li id="node_'+ status_all[st].id +'">' + generate_li(status_all[st]) + '</li>' ;
 		}
 	}
@@ -114,7 +116,7 @@ function update_result(msgs)
 
 	var html='';
 
-	for (var idx in results)
+	for (var idx=0; idx<results.length; idx++)
 	{
 		var res = results[idx];
 		var nodeid = res.nodeid;
@@ -135,7 +137,7 @@ function update_result(msgs)
 		$('#task_result_node_'+nodeid).css("line-height","normal");
 
 		$("#node_"+nodeid).show();
-		if(color!="#ddd") $('#node_'+nodeid).find('.col-md-11').click();
+		if(color!="#ddd" && $('#node_0').find('.col-md-11').attr('aria-expanded')==="false") $('#node_'+nodeid).find('.col-md-11').click();
 
 	}
 }
@@ -158,7 +160,7 @@ function runTask()
 	function taskbtn_on()
 	{
 		$('#btn_run').addClass('active');
-		$('#btn_run').attr("onclick","");
+		//$('#btn_run').attr("onclick","");
 		$('#btn_run').children('span').removeClass('fa-play');
 		$('#btn_run').children('span').addClass('fa-spinner');
 		$('#btn_run').children('span').addClass('fa-spin');
@@ -191,27 +193,24 @@ function runTask()
 
 		var target_node = get_selected_ids();
 
-		for (var i in nodes_id)
-		{
-			var	nodeid = nodes_id[i];
-			$('#node_'+nodeid).hide();
-		}
 
-		for (var i in nodes_id)
-		{
-			var	nodeid = nodes_id[i];
+		nodes_id.forEach(function (nodeid){
 			$('#node_'+nodeid).hide();
-			if($.inArray(nodes_id[i], target_node) != -1)
+			if($.inArray(nodeid,target_node) != -1)
 			{
 				task_nodelist.add(nodeid);
 				$.post(api_base_url+nodeid+modulename, postcontent);
 			}
-		}
+		});
 		
 		update_fetcher = setInterval(function(){ 
 			if(document.visibilityState == "hidden") return;
 			$.get(update_url , update_result);
-			if(task_nodelist.size == 0){taskbtn_off(); running = false;}
+			if(task_nodelist.size == 0){
+				taskbtn_off();
+				running = false;
+				clearInterval(update_fetcher);
+			}
 		},2000);
 
 		

@@ -1,4 +1,4 @@
-var nodes_id=[];
+var nodes_id=null;
 var modal_node=null;
 
 var sync_on = true;
@@ -52,7 +52,7 @@ function btn_conf(nodeid)
 	            buttonclass = "flat-button red";
 	            btn_onclick = "connect(this,"+ nodeid +")";
 	            break;
-	        case -3:
+	        case -3: case -4: case -5:
 	            buttontext = "Offline";
 	            buttonclass = "flat-button red";
 	            btn_onclick = "connect(this,"+ nodeid +")";
@@ -124,10 +124,10 @@ function generate_li(node)
 	var address = node.address;
 	var status = node.status;
 
-	nodes_id.push(nodeid);
+	nodes_id.add(nodeid);
 
 	var lastmsg="",buttonclass="",buttontext="",rowclass="",btn_onclick="";
-		switch (status) {
+	switch (status) {
 	    case 1:
 	        buttontext = "Online";
 	        buttonclass = "flat-button";
@@ -157,7 +157,21 @@ function generate_li(node)
 	        buttontext = "Offline";
 	        buttonclass = "flat-button red";
 	        btn_onclick = "connect(this,"+ nodeid +")";
-	        lastmsg = "Node Timeout";
+	        lastmsg = "Timeout (eg. tcp drop)";
+	        break;
+	    case -4:
+	        rowclass="danger";
+	        buttontext = "Offline";
+	        buttonclass = "flat-button red";
+	        btn_onclick = "connect(this,"+ nodeid +")";
+	        lastmsg = "Port Refused (eg. tcp reject)";
+	        break;
+	    case -5:
+	        rowclass="danger";
+	        buttontext = "Offline";
+	        buttonclass = "flat-button red";
+	        btn_onclick = "connect(this,"+ nodeid +")";
+	        lastmsg = "Network is unreachable (No route to host)";
 	        break;
 	    default:
 	        return;
@@ -172,7 +186,7 @@ function generate_li(node)
 	var html = '<div class="row">\
 			<div class="col-md-1"><input type="checkbox" checked></input>' + '</div>\
 			<div class="col-md-2">#' + nodeid+ '</div>\
-			<div class="col-md-3">'+ hostname + '</div>\
+			<div class="col-md-3">'+ htmlspecialchars(hostname) + '</div>\
 			<div class="col-md-3">'+ address + '</div>\
 			<div class="col-md-2">'+ btn_status + '</div>\
 			<div class="col-md-1">'+ btn_conf + '</div>\
@@ -188,7 +202,7 @@ function init_chart(msgs)
 
 	var html='';
 
-	for (var st in status_all)
+	for (var st=0; st<status_all.length; st++)
 	{
 		html += '<li id="node_'+ status_all[st].id +'">' + generate_li(status_all[st]) + '</li>' ;
 	}
@@ -202,7 +216,7 @@ function update_chart(msgs)
 	var status_all = JSON.parse(msgs);
 	if(status_all.length)
 	{
-		for (var st in status_all)
+		for (var st=0; st<status_all.length; st++)
 		{
 			var node = status_all[st];
 			var nodeid = node.id;
@@ -232,7 +246,7 @@ function get_selected_ids()
 function connect_selected()
 {
 	var selected = get_selected_ids();
-	for (var j in selected)
+	for (var j=0; j<selected.length; j++)
 	{
 		$.get('/node/connect/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
 	}
@@ -241,7 +255,7 @@ function connect_selected()
 function disconnect_selected()
 {
 	var selected =  get_selected_ids();
-	for (var j in selected)
+	for (var j=0; j<selected.length; j++)
 	{
 		$.get('/node/disconnect/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
 	}
@@ -251,9 +265,11 @@ function disconnect_selected()
 function delete_selected()
 {
 	var selected =  get_selected_ids();
-	for (var j in selected)
+	for (var j=0; j<selected.length; j++)
 	{
 		$.get('/node/delete/'+selected[j],function(m){addlog(JSON.parse(m).msg);});
+		$('#node_'+selected[j]).remove();
+		nodes_id.delete(selected[j]);
 	}
 }
 
@@ -294,15 +310,17 @@ function add_node()
 
 function load_chart()
 {
+	nodes_id=new Set();
 	$.get("/node/get/all?detail",init_chart);
 }
 
 
 function delete_node()
 {
-	var nodeid = $('#modal_nodeid').text();
+	var nodeid = parseInt($('#modal_nodeid').text());
 	$.get('/node/delete/'+nodeid,function(m){addlog(JSON.parse(m).msg);});
 	$('#node_'+nodeid).remove();
+	nodes_id.delete(nodeid);
 }
 
 function update_node()
@@ -336,15 +354,13 @@ $('#btn_passwd').show();$('#btn_key').hide(); $('#modal_addnode_password').show(
 
 $('#nsl').keyup(function(){
 	var selected = NSL(nodes_id ,$('#nsl').val());
-	for (var i in nodes_id)
-	{
-		$('#node_'+nodes_id[i]).find('input').removeAttr('checked');
-	}
+	nodes_id.forEach(function (item){
+		$('#node_'+item).find('input').get(0).checked=false;
+	});
 
-	for (var j in selected)
-	{
-		$('#node_'+selected[j]).find('input').attr('checked','');
-	}
+	selected.forEach(function (item){
+		$('#node_'+item).find('input').get(0).checked=true;
+	});
 })
 
 

@@ -1,0 +1,5 @@
+{
+  "description": "search login attempts", 
+  "module": "log_analyze.sh", 
+  "argument": "/var/log/auth.log"
+}

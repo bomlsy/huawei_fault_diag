@@ -34,6 +34,31 @@ window.onload = function()
 
 }
 
+function htmlspecialchars(str)    
+{    
+	var s = "";  
+	if (str.length == 0) return "";  
+	for   (var i=0; i<str.length; i++)  
+	{  
+	    switch (str.substr(i,1))  
+	    {  
+		case "<": s += "&lt;"; break;  
+		case ">": s += "&gt;"; break;  
+		case "&": s += "&amp;"; break;  
+		case " ":  
+		    if(str.substr(i + 1, 1) == " "){  
+		        s += " &nbsp;";  
+		        i++;  
+		    } else s += " ";  
+		    break;  
+		case "\"": s += "&quot;"; break;  
+		case "\n": s += "<br>"; break;  
+		default: s += str.substr(i,1); break;  
+	    }  
+	}  
+return s;  
+}  
+
 function refresh_after(sec)
 {
 	setTimeout(function(){location.reload(true);},sec*1000);
@@ -68,7 +93,7 @@ function addlog(logcontent) {
     var second = time.getSeconds();
     if (second < 10) second = '0' + second;
     time = '[' + hour + ':' + minute + ':' + second + '] ';
-    $('#logarea').val( time + logcontent + '\n' + $('#logarea').val());
+    $('#logarea').append( time + logcontent + '\n');
     $('#logarea').scrollTop(1000000);
 }
 
@@ -85,7 +110,7 @@ function NSL(nodes_id, nsl_str)
         {
             if(nsu[0]=='-'){ // -
                 nsu = nsu.substr(1).replace('(','').replace(')','');
-                if(nsu == 'all'){
+                if(nsu == 'all' || nsu == 'a'){
                     nodeset.clear();
                 }else{
                     if(nsu.indexOf('-') != -1){
@@ -103,7 +128,7 @@ function NSL(nodes_id, nsl_str)
                 }
             }else{ 
                 nsu = nsu.replace('+','').replace('(','').replace(')','');
-                if(nsu == 'all'){
+                if(nsu == 'all' || nsu == 'a'){
                     nodeset = new Set(nodes_id);
                 }else{
                     if(nsu.indexOf('-') != -1){
@@ -122,11 +147,11 @@ function NSL(nodes_id, nsl_str)
             }
         }
     }
-        var nodearr = [];
-        nodeset.forEach( function(item,sitem,s) {
-            if($.inArray(item, nodes_id) != -1)
-                nodearr.push(item);
-        });
+    var nodearr = new Set();
+    nodeset.forEach( function(item) {
+        if(nodes_id.has(item))
+        nodearr.add(item);
+    });
 
     return nodearr;
 

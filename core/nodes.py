@@ -11,19 +11,19 @@ from notification import Notification
 if __name__ == '__main__':
     exit(1)
 
-
 class Node:
     # STATUS
     #  1 connected
     #  0 connecting
     # -1 disconnected (normally)
     # -2 access error
-    # -3 timeout
+    # -3 Timeout (tcp drop)
+    # -4 Port Refused  (tcp reject)
+    # -5 Network is unreachable (no route to host)
     status = -1
 
     def __init__(self):
             self.client = None
-            self.chan = None
             self.config = None
             self.msg = Notification()
             self.status = -1
@@ -45,13 +45,14 @@ class Node:
             if self.status != 1:
                 self.client = ssh.SSHClient()
                 self.client.set_missing_host_key_policy(ssh.AutoAddPolicy())
+
                 if self.config['authtype'] == 'key':
                     self.client.connect(hostname = self.config['address'], port = int(self.config['port']),
                                         username = self.config['username'], key_filename = os.path.join(os.getcwd(),'config','keyfile',self.config['key']),
-                                        password = self.config['password'])
+                                        password = self.config['password'], timeout = tcp_connect_timeout)
                 elif self.config['authtype'] == 'password':
                     self.client.connect(hostname = self.config['address'], port = int(self.config['port']),
-                                        username = self.config['username'], password = self.config['password'])
+                                        username = self.config['username'], password = self.config['password'],  timeout = tcp_connect_timeout)
 
                 stdin, stdout, stderr = self.client.exec_command('hostname')
                 for line in stdout:
@@ -60,28 +61,35 @@ class Node:
                 SetCacheReady2Save(True)
 
                 self.status = 1
-                self.client.exec_command('mkdir -p log_analyser')
-                th = threading.Thread(target = self.daemon)
-                th.daemon=True
-                th.start()
-                # push notification
-                self.msg.put('update',self.getBasicStatus())
+                self.client.exec_command('mkdir -p log_analyser', timeout=command_timeout)
+
 
         except AuthenticationException:
             self.status = -2
-            self.msg.put('update', self.getBasicStatus())
-        except IOError:
-            self.status = -2
+        except (socket.timeout, SSHException):
+            self.status = -3
+        except NoValidConnectionsError:
+            self.status = -4
+        except socket.error:
+            self.status = -5
+        finally:
+            # push notification
             self.msg.put('update', self.getBasicStatus())
 
 
     def disconnect(self):
         if self.status == 1:
             self.status = -1
-            self.client.exec_command('rm -rf log_analyser')
-            self.client.close()
-            # push notification
-            self.msg.put('update', self.getBasicStatus())
+            try:
+                self.client.exec_command('rm -rf log_analyser', timeout=command_timeout)
+                self.client.close()
+            except (socket.timeout, SSHException):
+                self.status = -3.
+            except socket.error:
+                self.status = -5
+            finally:
+                # push notification
+                self.msg.put('update', self.getBasicStatus())
 
 
     def getBasicStatus(self):
@@ -106,49 +114,47 @@ class Node:
            state['key'] = self.config['key']
         return state
 
-    def daemon(self):
-        tp = self.client.get_transport()
-        while self.status == 1:
-            sleep(1)
-            if self.status != 1:
-                return
-            if tp:
-                if not tp.is_active():
-                    self.status = -3
-                    return
     # block
     def execute_cmd(self, cmd):
+        res = ''
         try:
-            stdin,stdout,stderr = self.client.exec_command(cmd)
-            res=''
+            stdin,stdout,stderr = self.client.exec_command(cmd, timeout=command_timeout)
             for line in stdout:
                 res+=line
             for line in stderr:
                 res+=line
-            return res
-        except socket.error:
+        except (socket.timeout, SSHException):
             self.status = -3
+            self.msg.put('update', self.getBasicStatus())
+        except socket.error:
+            self.status = -5
+            self.msg.put('update', self.getBasicStatus())
+        finally:
+            return res
 
     # block
     def execute_mod(self, modulename, param=''):
+        res = ''
         try:
             mod = open(os.path.join('modules',modulename))
             modcontent = mod.read()
-            modsave = 'cat > "log_analyser/' + modulename + '" << MOD_EOF\n' + modcontent + '\nMOD_EOF\n'
-            self.client.exec_command(modsave)
-            self.client.exec_command('chmod +x log_analyser/' + modulename.replace(' ','\\ ')  )
-            stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./"' + modulename+ '" ' + param )
-            res=''
+            modsave = 'cat > "log_analyser/' + modulename + '" << MOD_EOF\n' + modcontent.replace("$","\\$") + '\nMOD_EOF\n'
+            self.client.exec_command(modsave, timeout=command_timeout)
+            self.client.exec_command('chmod +x log_analyser/"' + modulename + '"' , timeout=command_timeout )
+            stdin, stdout, stderr = self.client.exec_command('cd log_analyser && ./"' + modulename + '" ' + param, timeout=command_timeout )
             for line in stdout:
                 res+=line
             for line in stderr:
                 res+=line
-            return res
-
-        except socket.error:
+        except (socket.timeout, SSHException):
             self.status = -3
+            self.msg.put('update', self.getBasicStatus())
+        except socket.error:
+            self.status = -5
+            self.msg.put('update', self.getBasicStatus())
         except IOError:
             res = "Module not found"
+        finally:
             return res
 
 
@@ -159,17 +165,24 @@ class Nodes:
     connect_threads = []
     disconnect_threads = []
     msg = Notification()
-
+    daemon_run = True
 
     def daemon(self):
-        while True:
-            sleep(20)
+        while self.daemon_run:
+            for i in range(0,20):
+                sleep(1)
+                if not self.daemon_run:
+                    return
             for idx in range(len(self.connect_threads)-1,0,-1):
                 if not self.connect_threads[idx].isAlive():
                     del self.connect_threads[idx]
             for idx in range(len(self.disconnect_threads)-1,0,-1):
                 if not self.disconnect_threads[idx].isAlive():
                     del self.disconnect_threads[idx]
+
+    def stopDaemon(self):
+        self.daemon_run = False
+
 
     def addNode(self,ac):
         full_ac = self.access.addAccess(ac)
@@ -340,5 +353,5 @@ class Nodes:
                 th = threading.Thread(target = task)
                 th.daemon = True
                 th.start()
-        return '{"id":"all", "msg":"Module `%s` executed on all noeds"}' % mod
+        return '{"id":"all", "msg":"Module `%s` executed on all nodes"}' % mod
 

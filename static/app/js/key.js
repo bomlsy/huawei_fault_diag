@@ -14,7 +14,7 @@ function init_chart(msgs)
 
 	var html='';
 
-	for (var st in key_all)
+	for (var st=0; st<key_all.length; st++)
 	{
 
 		var keyname = key_all[st].key;
@@ -29,8 +29,8 @@ function init_chart(msgs)
 		html += '<div class="panel panel-default">\
 					<div class="panel-heading cgroupi"  data-toggle="collapse" data-parent="#accordion" href="#'+randid+'" class="collapsed" aria-expanded="false">\
                         <span class="panel-title"> ' + keyname + ' </span>\
-						<div class="float-md-right"><button class="flat-button small red" onclick=delete_key(\''+ keyname +'\')><span class="fa fa-close"></span> Del</button></div>\
-                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body code-area"><pre>'  + keycontent +'</pre></div></div></div>';
+						<div class="float-md-right"><button class="flat-button small red" onclick=delete_key(\''+ htmlspecialchars(keyname) +'\')><span class="fa fa-close"></span> Del</button></div>\
+                    </div><div id="'+randid+'" class="panel-collapse collapse" aria-expanded="false"><div class="panel-body code-area"><pre>'  + htmlspecialchars(keycontent) +'</pre></div></div></div>';
 
 	}
 	$('#key_list').html(html);
@@ -67,7 +67,7 @@ function add_key()
 
 function delete_key(keyname)
 {
-	$.get('/key/delete/'+keyname,function(m){addlog(JSON.parse(m).msg);load_mods();});
+	$.get('/key/delete/'+keyname,function(m){addlog(JSON.parse(m).msg);load_keys();});
 }
 
 
